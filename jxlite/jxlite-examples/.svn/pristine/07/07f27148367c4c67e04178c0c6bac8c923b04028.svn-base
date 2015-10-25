@@ -1,0 +1,14 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import uk.co.cleopatra.xmlmap.annotations.Path;
+
+public interface Person {
+	@Path("forename")
+	String getForename();
+
+	@Path("surname")
+	String getSurname();
+
+	@Path("@age")
+	int getAge();
+}

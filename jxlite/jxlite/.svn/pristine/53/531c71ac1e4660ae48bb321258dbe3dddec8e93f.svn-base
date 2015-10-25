@@ -1,0 +1,53 @@
+package uk.co.cleopatra.xmlmap;
+
+import static org.junit.Assert.*;
+
+import javax.xml.xpath.XPathExpression;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+public class IntConverterTest extends XmlTestBase {
+	private NodeConverter converter;
+
+	@Before
+	public void setUp() throws Exception {
+		converter = new IntConverter();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testMapElement() {
+		Node node = doc.getElementsByTagName("intElement").item(0);
+		Object result = converter.convert(node);
+		assertEquals(666, result);
+	}
+
+	@Test
+	public void testMapAttr() {
+		Element element = (Element) doc.getElementsByTagName("intAttr").item(0);
+		Attr attr = element.getAttributeNode("value");
+		Object result = converter.convert(attr);
+		assertEquals(123, result);
+	}
+
+	@Test
+	public void testMapInvalidInput() {
+		boolean exceptionThrown = false;
+		Node node = doc.getElementsByTagName("textElement").item(0);
+		try {
+			converter.convert(node);
+		} catch (XmlMapException e) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+	}
+
+}

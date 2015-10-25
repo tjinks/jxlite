@@ -1,0 +1,13 @@
+package uk.co.cleopatra.xmlmap;
+
+public class MockProxyFactoryBuilder implements ProxyFactoryBuilder {
+
+	@Override
+	public ProxyFactory build(Class<?> intf) {
+		if (intf.equals(MockProxyFactory.Intf.class)) {
+			return new MockProxyFactory();
+		}
+		throw new IllegalArgumentException("Unexpected interface type");
+	}
+
+}

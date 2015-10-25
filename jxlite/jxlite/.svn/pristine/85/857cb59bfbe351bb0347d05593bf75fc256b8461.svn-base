@@ -1,0 +1,22 @@
+package uk.co.cleopatra.jxlite.converters.datetime;
+
+import java.util.Calendar;
+
+import org.w3c.dom.Node;
+
+import uk.co.cleopatra.jxlite.converters.NodeConverterBase;
+
+public class DateConverter extends NodeConverterBase {
+	private final static CalendarConverter CALENDAR_CONVERTER = new CalendarConverter(Calendar.class);
+
+	public DateConverter(Class<?> objectType) {
+		super(objectType);
+	}
+
+	@Override
+	protected Object doConvert(Node node) throws Exception {
+		Calendar cal = (Calendar) CALENDAR_CONVERTER.convert(node);
+		return cal.getTime();
+	}
+
+}

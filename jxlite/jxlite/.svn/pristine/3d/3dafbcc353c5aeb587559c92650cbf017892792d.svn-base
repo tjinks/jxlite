@@ -1,0 +1,9 @@
+package uk.co.cleopatra.xmlmap;
+
+/**
+ * The values of this enumeration identify the different types of collection
+ * type that into which we can unmarshal an XML nodeset.
+ */
+enum CollectionType {
+	NONE, LIST, SET, ARRAY
+}

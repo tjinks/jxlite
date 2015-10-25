@@ -1,0 +1,11 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Node;
+
+/**
+ * Converts an XML node to a Java object of a particular type
+ */
+interface NodeConverter {
+	Object convert(Node node);
+	Class<?> getObjectType();
+}

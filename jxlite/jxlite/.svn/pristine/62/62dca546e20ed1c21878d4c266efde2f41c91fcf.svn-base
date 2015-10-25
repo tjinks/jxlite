@@ -1,0 +1,16 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Node;
+
+public class XmlNodeConverter extends NodeConverterBase {
+
+	protected XmlNodeConverter() {
+		super(Node.class);
+	}
+
+	@Override
+	protected Object doConvert(Node node) throws Exception {
+		return node;
+	}
+
+}

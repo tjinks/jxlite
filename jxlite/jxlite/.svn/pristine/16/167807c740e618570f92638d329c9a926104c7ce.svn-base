@@ -1,0 +1,22 @@
+package uk.co.cleopatra.xmlmap;
+
+public class XmlMapException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	public XmlMapException() {
+	}
+
+	public XmlMapException(String message) {
+		super(message);
+	}
+
+	public XmlMapException(Throwable cause) {
+		super(cause);
+	}
+
+	public XmlMapException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+}

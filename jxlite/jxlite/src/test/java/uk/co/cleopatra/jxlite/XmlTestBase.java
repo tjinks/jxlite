@@ -1,0 +1,73 @@
+package uk.co.cleopatra.jxlite;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+
+import uk.co.cleopatra.jxlite.NamespaceListParser;
+import uk.co.cleopatra.jxlite.JxLiteException;
+
+public class XmlTestBase {
+	protected static final String TEST_DATA = "/uk/co/cleopatra/jxlite/mapperData.xml";
+
+	protected XPathFactory xpf = XPathFactory.newInstance();
+	protected NamespaceContext nsContext = NamespaceListParser
+			.parse("a=http://xxx");
+	protected Document doc;
+
+	protected XmlTestBase() {
+		doc = docFromResource(TEST_DATA);
+	}
+
+	static Document docFromString(String xml) {
+		try {
+			InputStream is = new ByteArrayInputStream(xml.getBytes());
+			try {
+				return docFromStream(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			throw JxLiteException.convert(e);
+		}
+	}
+
+	static Document docFromResource(String path) {
+		try {
+			InputStream is = XmlTestBase.class.getResourceAsStream(path);
+			if (is == null) {
+				throw new FileNotFoundException(path);
+			}
+			try {
+				return docFromStream(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			throw JxLiteException.convert(e);
+		}
+	}
+
+	private static Document docFromStream(InputStream is) {
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			DocumentBuilder builder = dbf.newDocumentBuilder();
+			try {
+				return builder.parse(is);
+			} finally {
+				is.close();
+			}
+		} catch (Exception e) {
+			throw JxLiteException.convert(e);
+		}
+	}
+}

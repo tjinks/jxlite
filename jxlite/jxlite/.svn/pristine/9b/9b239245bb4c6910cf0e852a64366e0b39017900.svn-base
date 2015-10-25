@@ -1,0 +1,83 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+class UnmarshallerImpl implements Unmarshaller {
+
+	private Map<Method, ProxyableGetMethod> methodMap;
+	private final Class<?> instanceType;
+
+	private static class InvocationHandlerImpl implements InvocationHandler {
+		private final static Method TO_STRING, HASH_CODE, EQUALS;
+		private final HashMap<Method, Object> cachedResults = new HashMap<Method, Object>();
+
+		static {
+			try {
+				TO_STRING = Object.class.getMethod("toString");
+				HASH_CODE = Object.class.getMethod("hashCode");
+				EQUALS = Object.class.getMethod("equals", Object.class);
+			} catch (NoSuchMethodException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		InvocationHandlerImpl(Map<Method, ProxyableGetMethod> methodMap,
+				Element element) {
+			super();
+			for (Map.Entry<Method, ProxyableGetMethod> entry : methodMap
+					.entrySet()) {
+				Object value = entry.getValue().get(element);
+				cachedResults.put(entry.getKey(), value);
+			}
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			if (!cachedResults.containsKey(method)) {
+				if (method.equals(TO_STRING)) {
+					return "Xmlmap Proxy Object:" + hashCode();
+				} else if (method.equals(HASH_CODE)) {
+					return hashCode();
+				} else if (method.equals(EQUALS)) {
+					return proxy == args[0];
+				} else {
+					throw new UnsupportedOperationException("Method "
+							+ method.getName()
+							+ "() is not mapped to an XML element or attribute");
+				}
+			}
+			return cachedResults.get(method);
+		}
+	}
+
+	UnmarshallerImpl(Class<?> instanceType) {
+		super();
+		this.instanceType = instanceType;
+	}
+
+	void setMethodMap(Map<Method, ProxyableGetMethod> methodMap) {
+		this.methodMap = methodMap;
+	}
+
+	@Override
+	public Object unmarshal(final Element element) {
+		InvocationHandler invocationHandler = new InvocationHandlerImpl(
+				methodMap, element);
+		return Proxy.newProxyInstance(instanceType.getClassLoader(),
+				new Class[] { instanceType }, invocationHandler);
+	}
+
+	@Override
+	public Object unmarshal(Document doc) {
+		return unmarshal(doc.getDocumentElement());
+	}
+
+}

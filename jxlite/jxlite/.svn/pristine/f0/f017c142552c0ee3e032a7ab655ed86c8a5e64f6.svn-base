@@ -1,0 +1,34 @@
+package uk.co.cleopatra.xmlmap;
+
+import javax.xml.xpath.XPathExpression;
+
+import org.w3c.dom.Node;
+
+/**
+ * A convenience base class that simplifies exception handling for Converter
+ * implementations.
+ */
+public abstract class AbstractConverter implements Converter {
+
+	/**
+	 * Derived classes must override this method to either perform the required
+	 * conversion or throw an appropriate exception.
+	 * 
+	 * @param context
+	 * @param compiledXPath
+	 * @return Result of performing the conversion
+	 * @throws Exception
+	 */
+	protected abstract Object doConvert(Node context, XPathExpression compiledXPath)
+			throws Exception;
+
+	@Override
+	public Object convert(Node context, XPathExpression compiledXPath) {
+		try {
+			return doConvert(context, compiledXPath);
+		} catch (Exception e) {
+			throw new XmlMapException(e);
+		}
+	}
+
+}

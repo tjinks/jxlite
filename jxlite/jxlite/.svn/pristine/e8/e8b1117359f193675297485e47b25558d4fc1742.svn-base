@@ -1,0 +1,38 @@
+package uk.co.cleopatra.jxlite.converters.datetime;
+
+class Tokenizer {
+	private final String input;
+	private int index;
+
+	Tokenizer(String input) {
+		this.input = input;
+		index = 0;
+	}
+
+	int getInt(int expectedLength) {
+		int newIndex = index + expectedLength;
+		if (newIndex > input.length()) {
+			throw new JxLiteDateFormatException();
+		}
+		String digits = input.substring(index, newIndex);
+		try {
+			int result = Integer.parseInt(digits);
+			index = newIndex;
+			return result;
+		} catch (NumberFormatException e) {
+			throw new JxLiteDateFormatException();
+		}
+	}
+
+	boolean match(char c) {
+		return !atEnd() && input.charAt(index) == c;
+	}
+
+	void advance() {
+		index++;
+	}
+
+	boolean atEnd() {
+		return index >= input.length();
+	}
+}

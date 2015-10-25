@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<people>
+	<person age="21">
+		<forename>Fred</forename>
+		<surname>Bloggs</surname>
+	</person>
+	<person age="32">
+		<forename>Sue</forename>
+		<surname>Smith</surname>
+	</person>
+	<person age="88">
+		<forename>Elizabeth</forename>
+		<surname>Windsor</surname>
+	</person>
+</people>

@@ -1,0 +1,19 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+public class InterfaceConverter extends NodeConverterBase {
+	private final Unmarshaller unmarshaller;
+
+	protected InterfaceConverter(Class<?> objectType, Unmarshaller unmarshaller) {
+		super(objectType);
+		this.unmarshaller = unmarshaller;
+	}
+
+	@Override
+	protected Object doConvert(Node node) throws Exception {
+		return unmarshaller.unmarshal((Element) node);
+	}
+
+}

@@ -1,0 +1,66 @@
+package uk.co.cleopatra.jxlite.utils;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
+import uk.co.cleopatra.jxlite.JxLiteException;
+
+public class XmlDocumentLoader {
+	private static final ThreadLocal<DocumentBuilder> BUILDER = new ThreadLocal<DocumentBuilder>() {
+		@Override
+		protected DocumentBuilder initialValue() {
+			try {
+				DocumentBuilderFactory dbf = DocumentBuilderFactory
+						.newInstance();
+				dbf.setNamespaceAware(true);
+				return dbf.newDocumentBuilder();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	};
+
+	public static Document parseInputStream(InputStream is) {
+		try {
+			DocumentBuilder documentBuilder = BUILDER.get();
+			documentBuilder.reset();
+			return documentBuilder.parse(is);
+		} catch (Exception e) {
+			throw new JxLiteException(e);
+		}
+	}
+
+	public static Document parseString(String xml) {
+		try {
+			InputStream is = new ByteArrayInputStream(xml.getBytes("UTF8"));
+			return parseInputStream(is);
+		} catch (UnsupportedEncodingException e) {
+			throw new JxLiteException(e);
+		}
+	}
+
+	public static Document parseResource(String resourceName) {
+		try {
+			InputStream is = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream(resourceName);
+			if (is == null) {
+				throw new FileNotFoundException(resourceName);
+			}
+			try {
+				return parseInputStream(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+}

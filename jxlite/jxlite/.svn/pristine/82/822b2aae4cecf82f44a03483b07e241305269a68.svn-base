@@ -1,0 +1,9 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+public interface Unmarshaller {
+	Object unmarshal(Element element);
+	Object unmarshal(Document doc);
+}

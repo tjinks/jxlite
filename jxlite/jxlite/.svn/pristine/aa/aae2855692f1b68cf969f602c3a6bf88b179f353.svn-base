@@ -1,0 +1,87 @@
+package uk.co.cleopatra.jxlite.converters.datetime;
+
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class TokenizerTest {
+	private Tokenizer tokenizer;
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@Test
+	public void testGetIntOk() {
+		tokenizer = new Tokenizer("123456");
+		int result = tokenizer.getInt(4);
+		assertEquals(1234, result);
+		result = tokenizer.getInt(2);
+		assertEquals(56, result);
+	}
+	
+	@Test
+	public void testGetIntInvalidChar() {
+		tokenizer = new Tokenizer("123x");
+		try {
+			tokenizer.getInt(4);
+			fail("Exception not thrown");
+		} catch (JxLiteDateFormatException e) {
+			return;
+		}
+	}
+	
+	@Test
+	public void testGetIntInsufficientData() {
+		tokenizer = new Tokenizer("123");
+		try {
+			tokenizer.getInt(4);
+			fail("Exception not thrown");
+		} catch (JxLiteDateFormatException e) {
+			return;
+		}
+	}
+
+	@Test
+	public void testMatchSuccess() {
+		tokenizer = new Tokenizer("ab");
+		assertTrue(tokenizer.match('a'));
+	}
+	
+	@Test
+	public void testMatchFail() {
+		tokenizer = new Tokenizer("ab");
+		assertFalse(tokenizer.match('b'));
+	}
+	
+	@Test
+	public void testMatchFailAtEndOfInput() {
+		tokenizer = new Tokenizer("ab");
+		tokenizer.advance();
+		tokenizer.advance();
+		assertFalse(tokenizer.match('a'));
+		assertFalse(tokenizer.match('b'));
+	}
+	
+	@Test
+	public void testAtEnd() {
+		tokenizer = new Tokenizer("ab");
+		assertFalse(tokenizer.atEnd());
+		tokenizer.advance();
+		assertFalse(tokenizer.atEnd());
+		tokenizer.advance();
+		assertTrue(tokenizer.atEnd());
+	}
+	
+	@Test
+	public void testAdvance() {
+		tokenizer = new Tokenizer("ab");
+		assertTrue(tokenizer.match('a'));
+		tokenizer.advance();
+		assertTrue(tokenizer.match('b'));
+		tokenizer.advance();
+		assertTrue(tokenizer.atEnd());
+	}
+	
+}

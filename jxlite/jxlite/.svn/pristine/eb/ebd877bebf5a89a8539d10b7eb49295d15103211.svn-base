@@ -1,0 +1,21 @@
+package uk.co.cleopatra.xmlmap;
+
+import javax.xml.xpath.XPathExpression;
+
+import org.w3c.dom.Node;
+
+/**
+ * Instances of this interface convert XML data to a particular Java type
+ */
+interface Converter {
+	/**
+	 * Converts the XML data returned by an XPath expression to the
+	 * required Java type
+	 * 
+	 * @param context Context in which to evaluate the XPath expression
+	 * @param xpathExpression The XPath expression
+	 * @return Converted data
+	 * @throws XmlMapException If the required conversion cannot be carried out
+	 */
+	Object convert(Node context, XPathExpression xpathExpression);
+}

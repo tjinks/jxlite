@@ -1,0 +1,185 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPathExpression;
+
+import org.w3c.dom.Element;
+
+class ProxyableGetMethodFactory {
+
+	private final UnmarshallerFactory unmarshallerFactory;
+
+	// private final Map<Class<?>, NodeConverter> nodeConvertorRegistry;
+
+	@SuppressWarnings("serial")
+	private static class InvalidReturnTypeException extends Exception {
+		InvalidReturnTypeException() {
+			super();
+		}
+	}
+
+	private static class ProxyableGetMethodImpl implements ProxyableGetMethod {
+
+		private final XPathConverter converter;
+		private final Object defaultValue;
+
+		ProxyableGetMethodImpl(XPathExpression xPathExpression,
+				Multiplicity multiplicity, CollectionType collectionType,
+				NodeConverter nodeConverter, Object defaultValue) {
+			converter = new XPathConverter(xPathExpression, multiplicity,
+					collectionType, nodeConverter);
+			this.defaultValue = defaultValue;
+		}
+
+		@Override
+		public Object get(Element context) {
+			Object result = converter.convert(context);
+			if (result == null) {
+				result = defaultValue;
+			}
+			return result;
+		}
+	}
+
+	private final NamespaceContext namespaceContext;
+	private final NodeConverterRegistry nodeConverterRegistry;
+
+	ProxyableGetMethodFactory(UnmarshallerFactory unmarshallerFactory,
+			NamespaceContext namespaceContext,
+			NodeConverterRegistry nodeConverterRegistry) {
+		this.namespaceContext = namespaceContext;
+		this.unmarshallerFactory = unmarshallerFactory;
+		this.nodeConverterRegistry = nodeConverterRegistry;
+	}
+
+	ProxyableGetMethod methodFor(Method method) {
+		try {
+			Path pathAnnotation = method.getAnnotation(Path.class);
+			if (pathAnnotation == null) {
+				return null;
+			}
+			if (method.getParameterTypes().length > 0) {
+				throw new XmlMapException("Method " + method.getName()
+						+ " cannot take parameters");
+			}
+			boolean required = (method.getAnnotation(Required.class) != null);
+			Object defaultValue = getDefaultValue(method);
+			Type returnType = method.getGenericReturnType();
+			CollectionType collectionType = getCollectionType(returnType);
+			Multiplicity multiplicity;
+			switch (collectionType) {
+			case NONE:
+				multiplicity = (required ? Multiplicity.EXACTLY_ONE
+						: Multiplicity.ZERO_OR_ONE);
+				break;
+			default:
+				if (defaultValue != null) {
+					throw new XmlMapException(
+							"Default value not supported for collection types");
+				}
+				multiplicity = (required ? Multiplicity.ONE_OR_MORE
+						: Multiplicity.ZERO_OR_MORE);
+				break;
+			}
+			
+			NodeConverter nodeConverter;
+			ConvertUsing convertUsingAnnotation = method.getAnnotation(ConvertUsing.class);
+			if (convertUsingAnnotation != null) {
+				nodeConverter = (NodeConverter) convertUsingAnnotation.value().newInstance();
+			} else {
+				nodeConverter = getNodeConverter(returnType);
+			}
+			if (nodeConverter instanceof NodeValueConverter && defaultValue instanceof String) {
+				defaultValue = ((NodeValueConverter) nodeConverter).stringToObject((String) defaultValue);
+			}
+			XPathExpression xPathExpression = XPathCompiler.compile(
+					pathAnnotation.value(), namespaceContext);
+			return new ProxyableGetMethodImpl(xPathExpression, multiplicity,
+					collectionType, nodeConverter, defaultValue);
+		} catch (InvalidReturnTypeException e) {
+			throw new XmlMapException("Return type for method '"
+					+ method.getName() + "' is not supported");
+		} catch (Exception e) {
+			throw new XmlMapException(e);
+		}
+	}
+	
+	private Object getDefaultValue(Method method) {
+		DefaultString defaultStringAnnotation = method
+				.getAnnotation(DefaultString.class);
+		if (defaultStringAnnotation != null) {
+			return defaultStringAnnotation.value();
+		}
+		DefaultInt defaultIntAnnotation = method
+				.getAnnotation(DefaultInt.class);
+		if (defaultIntAnnotation != null) {
+			return defaultIntAnnotation.value();
+		}
+		DefaultBoolean defaultBooleanAnnotation = method
+				.getAnnotation(DefaultBoolean.class);
+		if (defaultBooleanAnnotation != null) {
+			return defaultBooleanAnnotation.value();
+		}
+		return null;
+	}
+
+	private NodeConverter getNodeConverter(Type returnType)
+			throws InvalidReturnTypeException {
+		Class<?> cl = null;
+		if (returnType instanceof Class) {
+			cl = (Class<?>) returnType;
+			if (cl.isArray()) {
+				returnType = cl.getComponentType();
+			}
+		} else if (returnType instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) returnType;
+			Type[] typeArgs = pt.getActualTypeArguments();
+			if (typeArgs.length != 1) {
+				throw new InvalidReturnTypeException();
+			}
+			returnType = typeArgs[0];
+		}
+		if (returnType instanceof Class) {
+			cl = (Class<?>) returnType;
+			NodeConverter result = nodeConverterRegistry.lookup(cl);
+			if (result != null) {
+				return result;
+			}
+			if (cl.isInterface()) {
+				Unmarshaller unmarshaller = unmarshallerFactory.build(cl,
+						nodeConverterRegistry);
+				return new InterfaceConverter(cl, unmarshaller);
+			}
+
+		}
+		throw new InvalidReturnTypeException();
+	}
+
+	private static CollectionType getCollectionType(Type returnType)
+			throws InvalidReturnTypeException {
+		if (returnType instanceof Class) {
+			Class<?> cl = (Class<?>) returnType;
+			if (cl.isArray()) {
+				return CollectionType.ARRAY;
+			} else {
+				return CollectionType.NONE;
+			}
+		} else if (returnType instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) returnType;
+			Type rawType = pt.getRawType();
+			if (rawType.equals(List.class)) {
+				return CollectionType.LIST;
+			} else if (rawType.equals(Set.class)) {
+				return CollectionType.SET;
+			}
+		}
+		throw new InvalidReturnTypeException();
+	}
+
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="http://xxx">
+	<textAttr value="xyz" />
+	<textElement>abc123</textElement>
+	<intAttr value="123" />
+	<boolElement>true</boolElement>
+	<boolAttr value="no" />
+	<intElement>666</intElement>
+	<doubleItElement>3</doubleItElement>
+	<listElement>
+		<item>Item1</item>
+		<item>Item2</item>
+		<item>Item3</item>
+	</listElement>
+	<name>
+		<forename>fred</forename>
+		<surname>bloggs</surname>
+	</name>
+</root>

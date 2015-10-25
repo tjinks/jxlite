@@ -1,0 +1,69 @@
+package uk.co.cleopatra.xmlmap;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.xml.sax.InputSource;
+
+class XPathCompiler {
+
+	private static class SynchronizedXPathExpression implements XPathExpression {
+		private final XPathExpression expr;
+
+		public SynchronizedXPathExpression(XPathExpression expr) {
+			this.expr = expr;
+		}
+
+		@Override
+		public Object evaluate(Object item, QName returnType)
+				throws XPathExpressionException {
+			synchronized (expr) {
+				return expr.evaluate(item, returnType);
+			}
+		}
+
+		@Override
+		public String evaluate(Object item) throws XPathExpressionException {
+			synchronized (expr) {
+				return expr.evaluate(item);
+			}
+		}
+
+		@Override
+		public Object evaluate(InputSource source, QName returnType)
+				throws XPathExpressionException {
+			synchronized (expr) {
+				return expr.evaluate(source, returnType);
+			}
+		}
+
+		@Override
+		public String evaluate(InputSource source)
+				throws XPathExpressionException {
+			synchronized (expr) {
+				return expr.evaluate(source);
+			}
+		}
+	}
+
+	private static ThreadLocal<XPathFactory> xpf = new ThreadLocal<XPathFactory>() {
+		@Override
+		protected XPathFactory initialValue() {
+			return XPathFactory.newInstance();
+		}
+	};
+
+	XPathExpression compile(String xpath, NamespaceContext namespaceContext) {
+		try {
+			XPath xp = xpf.get().newXPath();
+			xp.setNamespaceContext(namespaceContext);
+			return new SynchronizedXPathExpression(xp.compile(xpath));
+		} catch (Exception e) {
+			throw new XmlMapException(e);
+		}
+	}
+}

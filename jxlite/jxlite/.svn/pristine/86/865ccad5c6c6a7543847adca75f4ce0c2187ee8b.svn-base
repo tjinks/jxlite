@@ -1,0 +1,14 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses({ IntConverterTest.class, ListConverterTest.class,
+		NamespaceListParserTest.class, ProxyableGetMethodFactoryTest.class,
+		ProxyFactoryBuilderImplTest.class, ProxyFactoryImplTest.class,
+		TextConverterTest.class })
+public class AllTests {
+
+}

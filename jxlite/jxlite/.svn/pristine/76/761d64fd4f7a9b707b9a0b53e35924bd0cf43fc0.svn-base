@@ -1,0 +1,7 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Element;
+
+public interface ProxyFactory {
+	Object instanceFromElement(Element element);
+}

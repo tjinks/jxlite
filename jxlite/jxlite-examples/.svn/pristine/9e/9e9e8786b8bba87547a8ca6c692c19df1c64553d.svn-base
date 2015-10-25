@@ -1,0 +1,14 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import uk.co.cleopatra.xmlmap.annotations.Path;
+
+public interface Address {
+	@Path("line1")
+	String getLine1();
+	
+	@Path("line2")
+	String getLine2();
+	
+	@Path("postcode")
+	String getPostcode();
+}

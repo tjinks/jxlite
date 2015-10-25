@@ -1,0 +1,57 @@
+package uk.co.cleopatra.xmlmap.converters;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import uk.co.cleopatra.xmlmap.XmlMapException;
+import uk.co.cleopatra.xmlmap.XmlTestBase;
+import uk.co.cleopatra.xmlmap.converters.IntegerClassConverter;
+import uk.co.cleopatra.xmlmap.converters.NodeConverter;
+
+public class IntegerClassConverterTest extends XmlTestBase {
+	private NodeConverter converter;
+
+	@Before
+	public void setUp() throws Exception {
+		converter = new IntegerClassConverter();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testMapElement() {
+		Node node = doc.getElementsByTagName("intElement").item(0);
+		Object result = converter.convert(node);
+		assertEquals(666, result);
+	}
+
+	@Test
+	public void testMapAttr() {
+		Element element = (Element) doc.getElementsByTagName("intAttr").item(0);
+		Attr attr = element.getAttributeNode("value");
+		Object result = converter.convert(attr);
+		assertEquals(123, result);
+	}
+
+	@Test
+	public void testMapInvalidInput() {
+		boolean exceptionThrown = false;
+		Node node = doc.getElementsByTagName("textElement").item(0);
+		try {
+			converter.convert(node);
+		} catch (XmlMapException e) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+	}
+
+}

@@ -1,0 +1,42 @@
+package uk.co.cleopatra.jxlite.converters;
+
+import uk.co.cleopatra.jxlite.JxLiteClientException;
+
+public class DateConverter extends TextContentConverter {
+	private class Parser {
+		private int index;
+		private final String input;
+
+		Parser(String input) {
+			this.input = input;
+			index = 0;
+		}
+
+		private int parseNumber(int length, int min, int max) {
+			if (remaining() >= length) {
+				String textToParse = input.substring(index, length);
+				int result = Integer.parseInt(textToParse);
+				if (result >= min && result <= max) {
+					index += length;
+					return result;
+				}
+			}
+			throw new JxLiteClientException();
+		}
+
+		private int remaining() {
+			return input.length() - index;
+		}
+	}
+
+	public DateConverter(Class<?> objectType) {
+		super(objectType);
+	}
+
+	@Override
+	public Object stringToObject(String nodeValue) {
+
+		return null;
+	}
+
+}

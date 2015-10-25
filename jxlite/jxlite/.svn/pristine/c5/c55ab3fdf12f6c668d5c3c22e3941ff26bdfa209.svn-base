@@ -1,0 +1,33 @@
+package uk.co.cleopatra.jxlite.converters.datetime;
+
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import uk.co.cleopatra.jxlite.converters.TextContentConverter;
+
+public class CalendarConverter extends TextContentConverter {
+
+	public CalendarConverter(Class<?> objectType) {
+		super(objectType);
+	}
+
+	@Override
+	public Object stringToObject(String nodeValue) {
+		DateTimeParser parser = new DateTimeParser(nodeValue);
+		Calendar cal = Calendar.getInstance();
+		TimeZone timeZone = cal.getTimeZone();
+		cal.clear();
+		cal.set(Calendar.YEAR, parser.getYear());
+		cal.set(Calendar.MONTH, parser.getMonth() - 1);
+		cal.set(Calendar.DAY_OF_MONTH, parser.getDay());
+		cal.set(Calendar.HOUR_OF_DAY, parser.getHour());
+		cal.set(Calendar.MINUTE, parser.getMinute());
+		cal.set(Calendar.SECOND, parser.getSecond());
+		if (parser.getTzString() != null) {
+			timeZone = TimeZone.getTimeZone(parser.getTzString());
+		}
+		cal.setTimeZone(timeZone);
+		return cal;
+	}
+
+}

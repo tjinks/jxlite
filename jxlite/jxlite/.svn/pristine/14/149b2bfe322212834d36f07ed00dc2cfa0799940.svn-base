@@ -1,0 +1,19 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+import uk.co.cleopatra.xmlmap.converters.BooleanClassConverterTest;
+import uk.co.cleopatra.xmlmap.converters.IntegerClassConverterTest;
+import uk.co.cleopatra.xmlmap.converters.StringConverterTest;
+
+@RunWith(Suite.class)
+@SuiteClasses({ IntegerClassConverterTest.class,
+		BooleanClassConverterTest.class, InterfaceConverterTest.class,
+		NamespaceListParserTest.class, ProxyableGetMethodFactoryTest.class,
+		UnmarshallerFactoryImplTest.class, UnmarshallerImplTest.class,
+		StringConverterTest.class })
+public class AllTests {
+
+}

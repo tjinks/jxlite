@@ -1,0 +1,5 @@
+package uk.co.cleopatra.xmlmap;
+
+enum CollectionType {
+	NONE, LIST, SET, ARRAY
+}

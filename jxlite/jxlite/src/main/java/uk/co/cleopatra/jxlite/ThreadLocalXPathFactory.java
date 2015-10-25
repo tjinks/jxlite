@@ -1,0 +1,16 @@
+package uk.co.cleopatra.jxlite;
+
+import javax.xml.xpath.XPathFactory;
+
+public class ThreadLocalXPathFactory {
+	private static final ThreadLocal<XPathFactory> INSTANCE = new ThreadLocal<XPathFactory>() {
+		@Override
+		protected XPathFactory initialValue() {
+			return XPathFactory.newInstance();
+		}
+	};
+	
+	public static XPathFactory get() {
+		return INSTANCE.get();
+	}
+}

@@ -1,0 +1,10 @@
+package uk.co.cleopatra.xmlmap.converters;
+
+
+public class CharacterTypeConverter extends PrimitiveTypeConverter {
+
+	public CharacterTypeConverter() {
+		super(Character.TYPE, new CharacterClassConverter());
+	}
+
+}

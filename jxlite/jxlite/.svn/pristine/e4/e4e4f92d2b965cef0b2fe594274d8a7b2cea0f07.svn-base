@@ -1,0 +1,117 @@
+package uk.co.cleopatra.jxlite;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+class UnmarshallerImpl<T> implements Unmarshaller<T> {
+	private static final String OBJECT_METHODS_CLASS_NAME = "ObjectMethods";
+
+	private Map<Method, ProxyableGetMethod> methodMap;
+	private final Class<?> instanceType;
+
+	private static class InvocationHandlerImpl implements InvocationHandler {
+		private final static Method TO_STRING, HASH_CODE, EQUALS;
+		private final HashMap<Method, Object> cachedResults = new HashMap<Method, Object>();
+		ObjectMethodsBase<?> objectMethods;
+
+		static {
+			try {
+				TO_STRING = Object.class.getMethod("toString");
+				HASH_CODE = Object.class.getMethod("hashCode");
+				EQUALS = Object.class.getMethod("equals", Object.class);
+			} catch (NoSuchMethodException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		InvocationHandlerImpl(Map<Method, ProxyableGetMethod> methodMap,
+				Element element) {
+			super();
+			for (Map.Entry<Method, ProxyableGetMethod> entry : methodMap
+					.entrySet()) {
+				Object value = entry.getValue().get(element);
+				cachedResults.put(entry.getKey(), value);
+			}
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			if (!cachedResults.containsKey(method)) {
+				if (method.equals(TO_STRING)) {
+					return objectMethods.toString();
+				} else if (method.equals(HASH_CODE)) {
+					return objectMethods.hashCode();
+				} else if (method.equals(EQUALS)) {
+					return objectMethods.equals(args[0]);
+				} else {
+					throw new UnsupportedOperationException("Method "
+							+ method.getName()
+							+ "() is not mapped to an XML element or attribute");
+				}
+			}
+			return cachedResults.get(method);
+		}
+
+	}
+
+	UnmarshallerImpl(Class<?> instanceType) {
+		super();
+		this.instanceType = instanceType;
+	}
+
+	void setMethodMap(Map<Method, ProxyableGetMethod> methodMap) {
+		this.methodMap = methodMap;
+	}
+
+	@Override
+	public T unmarshal(final Element element) {
+		InvocationHandlerImpl invocationHandler = new InvocationHandlerImpl(
+				methodMap, element);
+		@SuppressWarnings("unchecked")
+		T result = (T) Proxy.newProxyInstance(instanceType.getClassLoader(),
+				new Class[] { instanceType }, invocationHandler);
+		invocationHandler.objectMethods = getObjectMethods(instanceType, result);
+		return result;
+	}
+
+	@Override
+	public T unmarshal(Document doc) {
+		return unmarshal(doc.getDocumentElement());
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static ObjectMethodsBase<?> getObjectMethods(Class<?> intf, Object proxy) {
+		try {
+			Class<ObjectMethodsBase> objectMethodsClass = getObjectMethodsClass(intf);
+			Field realObjectField = ObjectMethodsBase.class.getDeclaredField("realObject");
+			ObjectMethodsBase<?> result = objectMethodsClass.newInstance();
+			realObjectField.set(result, proxy);
+			return result;
+		} catch (Exception e) {
+			throw JxLiteException.convert(e);
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Class<ObjectMethodsBase> getObjectMethodsClass(
+			Class<?> outer) {
+		for (Class<?> inner : outer.getDeclaredClasses()) {
+			String className = inner.getSimpleName();
+			if (className.equals(OBJECT_METHODS_CLASS_NAME)) {
+				if (ObjectMethodsBase.class.isAssignableFrom(inner)) {
+					return (Class<ObjectMethodsBase>) inner;
+				}
+			}
+		}
+		return ObjectMethodsBase.class;
+	}
+}

@@ -1,0 +1,39 @@
+package uk.co.cleopatra.xmlmap;
+
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+import javax.xml.xpath.XPathExpression;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ListConverterTest extends XmlTestBase {
+
+	private NodeConverter converter;
+
+	@Before
+	public void setUp() throws Exception {
+		//converter = new ListConverter(compiler, new TextConverter());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testMap() {
+		/*
+		XPathExpression expr = compiler.compile("a:listElement/a:item", nsContext);
+		@SuppressWarnings("unchecked")
+		List<Object> result = (List<Object>) converter.convert(doc.getDocumentElement(), expr);
+		assertEquals(3, result.size());
+		assertEquals("Item1", result.get(0));
+		assertEquals("Item2", result.get(1));
+		assertEquals("Item3", result.get(2));
+		*/
+	}
+
+}

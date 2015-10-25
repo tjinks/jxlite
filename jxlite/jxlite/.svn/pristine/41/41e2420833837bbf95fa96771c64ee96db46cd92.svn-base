@@ -1,0 +1,39 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.util.HashSet;
+
+class NodeConverterRegistryImpl implements NodeConverterRegistry {
+	private final HashSet<NodeConverter> registry;
+	
+	NodeConverterRegistryImpl() {
+		super();
+		registry = new HashSet<NodeConverter>();
+		register(new IntegerClassConverter());
+		register(new IntegerTypeConverter());
+		register(new BooleanClassConverter());
+		register(new BooleanTypeConverter());
+		register(new StringConverter());
+		register(new XmlNodeConverter());
+		register(new CharacterClassConverter());
+		register(new CharacterTypeConverter());
+	}
+	
+	public NodeConverter register(NodeConverter nodeConverter) {
+		NodeConverter previous = lookup(nodeConverter.getObjectType());
+		if (previous != null) {
+			registry.remove(previous);
+		}
+		registry.add(nodeConverter);
+		return previous;
+	}
+	
+	public NodeConverter lookup(Class<?> cl) {
+		for (NodeConverter nodeConverter : registry) {
+			if (nodeConverter.getObjectType().equals(cl)) {
+				return nodeConverter;
+			}
+		}
+		return null;
+	} 
+		
+}

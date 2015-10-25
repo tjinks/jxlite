@@ -1,0 +1,13 @@
+package uk.co.cleopatra.xmlmap;
+
+public class MockUnmarshallerFactory implements UnmarshallerFactory {
+
+	@Override
+	public Unmarshaller build(Class<?> intf, NodeConverterRegistry nodeConverterRegistry) {
+		if (intf.equals(MockUnmarshaller.Intf.class)) {
+			return new MockUnmarshaller();
+		}
+		throw new IllegalArgumentException("Unexpected interface type");
+	}
+
+}

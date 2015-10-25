@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person age="21">
+	<forename>Fred</forename>
+	<surname>Bloggs</surname>
+	<address>
+		<line1>3 The Avenue</line1>
+		<line2>Oxwood</line2>
+		<postcode>XW1 1XW</postcode>
+	</address>
+</person>

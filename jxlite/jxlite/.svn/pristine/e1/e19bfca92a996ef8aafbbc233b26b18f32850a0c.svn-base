@@ -1,0 +1,9 @@
+package uk.co.cleopatra.xmlmap;
+
+import uk.co.cleopatra.xmlmap.converters.NodeConverter;
+
+public interface NodeConverterRegistry {
+	public NodeConverter register(NodeConverter nodeConverter);
+	
+	public NodeConverter lookup(Class<?> cl);
+}

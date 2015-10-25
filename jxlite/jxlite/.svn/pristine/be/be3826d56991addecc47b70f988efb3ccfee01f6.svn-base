@@ -1,0 +1,15 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Element;
+
+class AbstractProxyableGetMethod implements ProxyableGetMethod {
+	private XPathConverter xPathConverter;
+	
+	
+
+	@Override
+	public Object get(Element context) {
+		return xPathConverter.convert(context);
+	}
+
+}

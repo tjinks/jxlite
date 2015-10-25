@@ -1,0 +1,19 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+public class InterfaceConverter extends NodeConverterBase {
+	private final ProxyFactory proxyFactory;
+
+	protected InterfaceConverter(Class<?> objectType, ProxyFactory proxyFactory) {
+		super(objectType);
+		this.proxyFactory = proxyFactory;
+	}
+
+	@Override
+	protected Object doConvert(Node node) throws Exception {
+		return proxyFactory.instanceFromElement((Element) node);
+	}
+
+}

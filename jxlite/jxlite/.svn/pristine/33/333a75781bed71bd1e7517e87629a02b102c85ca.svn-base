@@ -1,0 +1,74 @@
+package uk.co.cleopatra.xmlmap;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import uk.co.cleopatra.xmlmap.annotations.NamespaceList;
+import uk.co.cleopatra.xmlmap.annotations.Path;
+
+public class UnmarshallerImplTest extends XmlTestBase {
+	private UnmarshallerImpl factory;
+	private ProxyableGetMethodFactory getMethodFactory;
+
+	@NamespaceList("a=http://xxx")
+	private interface TestInterface {
+		@Path("a:intElement")
+		int getIntElement();
+
+		@Path("a:textElement")
+		String getTextElement();
+
+		int unmapped();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		getMethodFactory = new ProxyableGetMethodFactory(null,
+				NamespaceListParser.parse("a=http://xxx"), new NodeConverterRegistryImpl());
+		HashMap<Method, ProxyableGetMethod> methodMap = new HashMap<Method, ProxyableGetMethod>();
+		Method getIntElement = TestInterface.class.getMethod("getIntElement",
+				new Class[0]);
+		methodMap.put(
+				TestInterface.class.getMethod("getIntElement", new Class[0]),
+				getMethodFactory.methodFor(getIntElement));
+		Method getTextElement = TestInterface.class.getMethod("getTextElement",
+				new Class[0]);
+		methodMap.put(
+				TestInterface.class.getMethod("getTextElement", new Class[0]),
+				getMethodFactory.methodFor(getTextElement));
+		factory = new UnmarshallerImpl(TestInterface.class);
+		factory.setMethodMap(methodMap);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testInstanceFromElement() {
+		TestInterface result = (TestInterface) factory.unmarshal(doc
+				.getDocumentElement());
+		assertEquals("abc123", result.getTextElement());
+		assertEquals(666, result.getIntElement());
+	}
+
+	@Test
+	public void testUnmappedMethod() {
+		TestInterface result = (TestInterface) factory.unmarshal(doc
+				.getDocumentElement());
+		boolean exceptionThrown = false;
+		try {
+			result.unmapped();
+		} catch (UnsupportedOperationException e) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+	}
+
+}

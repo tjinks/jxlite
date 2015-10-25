@@ -1,0 +1,48 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import javax.xml.namespace.NamespaceContext;
+
+class UnmarshallerFactoryImpl implements UnmarshallerFactory {
+	private final HashMap<Class<?>, Unmarshaller> unmarshallers = new HashMap<Class<?>, Unmarshaller>();
+
+	UnmarshallerFactoryImpl() {
+		super();
+	}
+
+	@Override
+	public Unmarshaller build(Class<?> intf, NodeConverterRegistry nodeConverterRegistry) {
+		if (!intf.isInterface()) {
+			throw new IllegalArgumentException("Interface type expected");
+		}
+		if (unmarshallers.containsKey(intf)) {
+			return unmarshallers.get(intf);
+		}
+		UnmarshallerImpl result = new UnmarshallerImpl(intf);
+		unmarshallers.put(intf, result);
+		NamespaceContext namespaceContext = getNamespaceContext(intf);
+		ProxyableGetMethodFactory proxyableGetMethodFactory = new ProxyableGetMethodFactory(
+				this, namespaceContext, nodeConverterRegistry);
+		HashMap<Method, ProxyableGetMethod> methodMap = new HashMap<Method, ProxyableGetMethod>();
+		for (Method method : intf.getMethods()) {
+			ProxyableGetMethod proxyMethod = proxyableGetMethodFactory
+					.methodFor(method);
+			if (proxyMethod != null) {
+				methodMap.put(method, proxyMethod);
+			}
+		}
+		result.setMethodMap(methodMap);
+		return result;
+	}
+
+	private static NamespaceContext getNamespaceContext(Class<?> intf) {
+		NamespaceList namespaceList = intf.getAnnotation(NamespaceList.class);
+		if (namespaceList == null) {
+			return NamespaceListParser.parse(new String[0]);
+		}
+		return NamespaceListParser.parse(namespaceList.value());
+	}
+
+}

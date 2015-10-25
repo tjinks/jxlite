@@ -1,0 +1,83 @@
+package uk.co.cleopatra.jxlite;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import uk.co.cleopatra.jxlite.NodeConverterRegistry;
+import uk.co.cleopatra.jxlite.Unmarshaller;
+import uk.co.cleopatra.jxlite.UnmarshallerFactory;
+import uk.co.cleopatra.jxlite.UnmarshallerFactoryImpl;
+import uk.co.cleopatra.jxlite.annotations.NamespaceList;
+import uk.co.cleopatra.jxlite.annotations.Path;
+
+public class UnmarshallerFactoryImplTest extends XmlTestBase {
+	private UnmarshallerFactory builder;
+	
+	@NamespaceList("a=http://xxx")
+	private interface TestInterface {
+		@SuppressWarnings("unused")
+		class ObjectMethods extends ObjectMethodsBase<TestInterface> {
+
+			@Override
+			public String toString() {
+				return "" + realObject.getIntElement() + " " + realObject.getTextElement();
+			}
+		}
+		
+		@Path("a:intElement")
+		int getIntElement();
+		
+		@Path("a:textElement")
+		String getTextElement();
+		
+		@Path("a:name")
+		Name getName();
+	}
+	
+
+	@NamespaceList("a=http://xxx")
+	private interface Name {
+		@Path("a:forename")
+		String getForename();
+		
+		@Path("a:surname")
+		String getSurname();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		builder = new UnmarshallerFactoryImpl();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testPrimtiveTypes() {
+		Unmarshaller<TestInterface> unmarshaller = builder.build(TestInterface.class, new NodeConverterRegistry());
+		TestInterface result = (TestInterface) unmarshaller.unmarshal(doc.getDocumentElement());
+		assertEquals("abc123", result.getTextElement());
+		assertEquals(666, result.getIntElement());
+	}
+	
+	@Test 
+	public void testToString() {
+		Unmarshaller<TestInterface> unmarshaller = builder.build(TestInterface.class, new NodeConverterRegistry());
+		TestInterface result = (TestInterface) unmarshaller.unmarshal(doc.getDocumentElement());
+		assertEquals("666 abc123", result.toString());
+	}
+	
+	@Test
+	public void testChildInterface() {
+		Unmarshaller<TestInterface> unmarshaller = builder.build(TestInterface.class, new NodeConverterRegistry());
+		TestInterface result = (TestInterface) unmarshaller.unmarshal(doc.getDocumentElement());
+		Name name = result.getName();
+		assertEquals("fred", name.getForename());
+		assertEquals("bloggs", name.getSurname());
+	}
+
+}

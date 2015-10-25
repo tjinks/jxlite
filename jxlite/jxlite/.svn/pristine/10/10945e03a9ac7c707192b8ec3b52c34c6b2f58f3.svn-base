@@ -1,0 +1,79 @@
+package uk.co.cleopatra.jxlite;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import uk.co.cleopatra.jxlite.NamespaceListParser;
+import uk.co.cleopatra.jxlite.NodeConverterRegistry;
+import uk.co.cleopatra.jxlite.ProxyableGetMethod;
+import uk.co.cleopatra.jxlite.ProxyableGetMethodFactory;
+import uk.co.cleopatra.jxlite.UnmarshallerImpl;
+import uk.co.cleopatra.jxlite.annotations.NamespaceList;
+import uk.co.cleopatra.jxlite.annotations.Path;
+
+public class UnmarshallerImplTest extends XmlTestBase {
+	private UnmarshallerImpl<TestInterface> unmarshaller;
+	private ProxyableGetMethodFactory getMethodFactory;
+
+	@NamespaceList("a=http://xxx")
+	private interface TestInterface {
+		@Path("a:intElement")
+		int getIntElement();
+
+		@Path("a:textElement")
+		String getTextElement();
+
+		int unmapped();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		getMethodFactory = new ProxyableGetMethodFactory(null,
+				NamespaceListParser.parse("a=http://xxx"), new NodeConverterRegistry());
+		HashMap<Method, ProxyableGetMethod> methodMap = new HashMap<Method, ProxyableGetMethod>();
+		Method getIntElement = TestInterface.class.getMethod("getIntElement",
+				new Class[0]);
+		methodMap.put(
+				TestInterface.class.getMethod("getIntElement", new Class[0]),
+				getMethodFactory.methodFor(getIntElement));
+		Method getTextElement = TestInterface.class.getMethod("getTextElement",
+				new Class[0]);
+		methodMap.put(
+				TestInterface.class.getMethod("getTextElement", new Class[0]),
+				getMethodFactory.methodFor(getTextElement));
+		unmarshaller = new UnmarshallerImpl<TestInterface>(TestInterface.class);
+		unmarshaller.setMethodMap(methodMap);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testInstanceFromElement() {
+		TestInterface result = (TestInterface) unmarshaller.unmarshal(doc
+				.getDocumentElement());
+		assertEquals("abc123", result.getTextElement());
+		assertEquals(666, result.getIntElement());
+	}
+
+	@Test
+	public void testUnmappedMethod() {
+		TestInterface result = (TestInterface) unmarshaller.unmarshal(doc
+				.getDocumentElement());
+		boolean exceptionThrown = false;
+		try {
+			result.unmapped();
+		} catch (UnsupportedOperationException e) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+	}
+
+}

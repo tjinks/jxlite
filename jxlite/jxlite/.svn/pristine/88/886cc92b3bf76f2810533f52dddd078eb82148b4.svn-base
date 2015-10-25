@@ -1,0 +1,23 @@
+package uk.co.cleopatra.xmlmap;
+
+import org.w3c.dom.Element;
+
+class MockProxyFactory implements ProxyFactory {
+	
+	interface Intf {
+		String getValue();
+	}
+
+	@Override
+	public Object instanceFromElement(final Element element) {
+		return new Intf() {
+
+			@Override
+			public String getValue() {
+				return element.getLocalName();
+			}
+			
+		};
+	}
+
+}

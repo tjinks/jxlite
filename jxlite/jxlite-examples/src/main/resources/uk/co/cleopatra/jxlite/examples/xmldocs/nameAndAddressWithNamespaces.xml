@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nameAndAddress xmlns="http://jxlite/names" xmlns:a="http://jxlite/addresses">
+	<name>
+		<forename>Fred</forename>
+		<surname>Bloggs</surname>
+	</name>
+	<a:address a:houseNumber="12">
+		<a:postcode>XW1 1XW</a:postcode>
+	</a:address>
+</nameAndAddress>

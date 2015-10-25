@@ -1,0 +1,32 @@
+package uk.co.cleopatra.xmlmap;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.Element;
+
+import uk.co.cleopatra.xmlmap.MockProxyFactory.Intf;
+
+public class InterfaceConverterTest extends XmlTestBase {
+	private NodeConverter converter;
+	private ProxyFactory proxyFactory = new MockProxyFactory();
+
+	@Before
+	public void setUp() throws Exception {
+		converter = new InterfaceConverter(MockProxyFactory.class, proxyFactory);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testConvert() {
+		Element element = doc.getDocumentElement();
+		MockProxyFactory.Intf result = (Intf) converter.convert(element);
+		assertEquals("root", result.getValue());
+	}
+
+}

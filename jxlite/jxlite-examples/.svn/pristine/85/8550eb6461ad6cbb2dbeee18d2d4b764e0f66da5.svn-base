@@ -1,0 +1,10 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import java.util.List;
+
+import uk.co.cleopatra.xmlmap.annotations.Path;
+
+public interface People {
+	@Path("person")
+	List<Person> getPeople();
+}

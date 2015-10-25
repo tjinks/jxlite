@@ -1,0 +1,18 @@
+package uk.co.cleopatra.xmlmap;
+
+public class XmlMap {
+	private static final UnmarshallerFactory FACTORY = new UnmarshallerFactoryImpl();
+	
+	public static Unmarshaller unmarshallerFor(Class<?> intf) {
+		return FACTORY.build(intf, new NodeConverterRegistry());
+	}
+
+	public static Unmarshaller unmarshallerFor(Class<?> intf, NodeConverterRegistry nodeConverterRegistry) {
+		return FACTORY.build(intf, nodeConverterRegistry);
+	}
+	
+	
+	public static NodeConverterRegistry getNodeConverterRegistry() {
+		return new NodeConverterRegistry();
+	}
+}

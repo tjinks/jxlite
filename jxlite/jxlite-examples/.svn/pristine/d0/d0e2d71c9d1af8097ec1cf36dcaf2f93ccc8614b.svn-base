@@ -1,0 +1,17 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import uk.co.cleopatra.xmlmap.annotations.Path;
+
+public interface PersonWithAddress2 {
+	@Path("forename")
+	String getForename();
+
+	@Path("surname")
+	String getSurname();
+
+	@Path("@age")
+	int getAge();
+	
+    @Path("address")
+    Address getAddress();
+}

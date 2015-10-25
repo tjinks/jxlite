@@ -1,0 +1,51 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import javax.xml.namespace.NamespaceContext;
+
+class ProxyFactoryBuilderImpl implements ProxyFactoryBuilder {
+	private final XPathCompiler xPathCompiler;
+	private final HashMap<Class<?>, ProxyFactory> factories = new HashMap<Class<?>, ProxyFactory>();
+
+	ProxyFactoryBuilderImpl(XPathCompiler xpathCompiler) {
+		this.xPathCompiler = xpathCompiler;
+	}
+
+	@Override
+	public ProxyFactory build(Class<?> intf) {
+		if (!intf.isInterface()) {
+			throw new IllegalArgumentException("Interface type expected");
+		}
+		if (factories.containsKey(intf)) {
+			return factories.get(intf);
+		}
+		ProxyFactoryImpl result = new ProxyFactoryImpl(intf);
+		factories.put(intf, result);
+		NamespaceContext namespaceContext = getNamespaceContext(intf);
+		ProxyableGetMethodFactory proxyableGetMethodFactory = new ProxyableGetMethodFactory(
+				this, xPathCompiler, namespaceContext);
+		HashMap<Method, ProxyableGetMethod> methodMap = new HashMap<Method, ProxyableGetMethod>();
+		for (Method method : intf.getMethods()) {
+			ProxyableGetMethod proxyMethod = proxyableGetMethodFactory
+					.methodFor(method);
+			if (proxyMethod != null) {
+				methodMap.put(method, proxyMethod);
+			}
+		}
+		result.setMethodMap(methodMap);
+		return result;
+	}
+
+	private static NamespaceContext getNamespaceContext(Class<?> intf) {
+		NamespaceList namespaceList = intf.getAnnotation(NamespaceList.class);
+		if (namespaceList == null) {
+			throw new XmlMapException(
+					"@NamespaceList annotation must be present on interface "
+							+ intf.getName());
+		}
+		return NamespaceListParser.parse(namespaceList.value());
+	}
+
+}

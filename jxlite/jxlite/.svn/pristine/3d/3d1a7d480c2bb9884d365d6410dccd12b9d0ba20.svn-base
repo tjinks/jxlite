@@ -1,0 +1,10 @@
+package uk.co.cleopatra.xmlmap.converters;
+
+
+public class BooleanTypeConverter extends PrimitiveTypeConverter {
+
+	public BooleanTypeConverter() {
+		super(Boolean.TYPE, new BooleanClassConverter());
+	}
+
+}

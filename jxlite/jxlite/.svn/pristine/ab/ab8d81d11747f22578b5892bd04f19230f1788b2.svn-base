@@ -1,0 +1,56 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.w3c.dom.Element;
+
+class ProxyFactoryImpl implements ProxyFactory {
+
+	private Map<Method, ProxyableGetMethod> methodMap;
+	private final Class<?> instanceType;
+	
+	private static class InvocationHandlerImpl implements InvocationHandler {
+		private final Map<Method, ProxyableGetMethod> methodMap;
+		private final Element element;
+		private final HashMap<Method, Object> cachedResults = new HashMap<Method, Object>();
+		
+		InvocationHandlerImpl(Map<Method, ProxyableGetMethod> methodMap,
+				Element element) {
+			super();
+			this.methodMap = methodMap;
+			this.element = element;
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			Object result = cachedResults.get(method);
+			if (result == null) {
+				result = methodMap.get(method).get(element);
+				cachedResults.put(method, result);
+			}
+			return result;
+		}
+	}
+
+	ProxyFactoryImpl(Class<?> instanceType) {
+		super();
+		this.instanceType = instanceType;
+	}
+
+	void setMethodMap(Map<Method, ProxyableGetMethod> methodMap) {
+		this.methodMap = methodMap;
+	}
+
+	@Override
+	public Object instanceFromElement(final Element element) {
+		InvocationHandler invocationHandler = new InvocationHandlerImpl(methodMap, element);
+		return Proxy.newProxyInstance(instanceType.getClassLoader(),
+				new Class[] { instanceType }, invocationHandler);
+	}
+
+}

@@ -1,0 +1,26 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import org.w3c.dom.Document;
+
+import uk.co.cleopatra.xmlmap.Unmarshaller;
+import uk.co.cleopatra.xmlmap.XmlMap;
+import uk.co.cleopatra.xmlmap.utils.XmlDocumentLoader;
+
+public class Example5 {
+
+	public static void main(String[] args) {
+		Document doc = XmlDocumentLoader
+				.parseResource("uk/co/cleopatra/xmlmap/examples/xmldocs/personWithMultilineAddress.xml");
+		Unmarshaller<PersonWithMultiLineAddress> unmarshaller = XmlMap
+				.unmarshallerFor(PersonWithMultiLineAddress.class);
+		PersonWithMultiLineAddress person = unmarshaller.unmarshal(doc);
+		System.out.println(person.getForename() + " " + person.getSurname()
+				+ ", " + person.getAge());
+		MultiLineAddress address = person.getAddress();
+		for (String line : address.getAddressLines()) {
+			System.out.println(line);
+		}
+		System.out.println(address.getPostcode());
+	}
+
+}

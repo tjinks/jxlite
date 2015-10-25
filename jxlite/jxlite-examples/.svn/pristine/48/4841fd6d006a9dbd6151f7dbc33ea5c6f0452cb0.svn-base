@@ -1,0 +1,21 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import org.w3c.dom.Document;
+
+import uk.co.cleopatra.xmlmap.Unmarshaller;
+import uk.co.cleopatra.xmlmap.XmlMap;
+import uk.co.cleopatra.xmlmap.utils.XmlDocumentLoader;
+
+public class Example2 {
+
+	public static void main(String[] args) {
+		Document doc = XmlDocumentLoader
+				.parseResource("uk/co/cleopatra/xmlmap/examples/xmldocs/people.xml");
+		Unmarshaller unmarshaller = XmlMap.unmarshallerFor(People.class);
+		People people = (People) unmarshaller.unmarshal(doc);
+		for (Person person : people.getPeople()) {
+			System.out.println(person.getForename() + " " + person.getSurname()
+					+ ", " + person.getAge());
+		}
+	}
+}

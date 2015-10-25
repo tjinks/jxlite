@@ -1,0 +1,105 @@
+package uk.co.cleopatra.xmlmap;
+
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ProxyableGetMethodFactoryTest extends XmlTestBase {
+	private ProxyableGetMethodFactory factory;
+
+	private interface Main {
+		@Path("a:intElement")
+		int getIntElement();
+
+		@Path("a:textAttr/@value")
+		String getTextAttr();
+
+		@Path("a:textElement")
+		MockProxyFactory.Intf getIntf();
+		
+		@Path("a:listElement/a:item")
+		List<String> getList();
+		
+		@Path("a:listElement/a:item")
+		Set<String> getSet();
+		
+		@Path("a:listElement/a:item")
+		String[] getArray();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		factory = new ProxyableGetMethodFactory(new MockProxyFactoryBuilder(),
+				compiler, NamespaceListParser.parse("a=http://xxx"));
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testGetMethodForInt() throws Exception {
+		Method method = Main.class.getMethod("getIntElement", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		int result = (Integer) pgm.get(doc.getDocumentElement());
+		assertEquals(666, result);
+	}
+
+	@Test
+	public void testGetMethodForString() throws Exception {
+		Method method = Main.class.getMethod("getTextAttr", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		String result = (String) pgm.get(doc.getDocumentElement());
+		assertEquals("xyz", result);
+	}
+	
+	@Test
+	public void testGetMethodForIntf() throws Exception {
+		Method method = Main.class.getMethod("getIntf", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		MockProxyFactory.Intf result = (MockProxyFactory.Intf) pgm.get(doc.getDocumentElement());
+		assertEquals("textElement", result.getValue());
+	}
+	
+	@Test
+	public void testGetMethodForList() throws Exception {
+		Method method = Main.class.getMethod("getList", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		@SuppressWarnings("unchecked")
+		List<String> result = (List<String>) pgm.get(doc.getDocumentElement());
+		assertEquals(3, result.size());
+		assertEquals("Item1", result.get(0));
+		assertEquals("Item2", result.get(1));
+		assertEquals("Item3", result.get(2));
+	}
+
+	@Test
+	public void testGetMethodForSet() throws Exception {
+		Method method = Main.class.getMethod("getSet", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		@SuppressWarnings("unchecked")
+		Set<String> result = (Set<String>) pgm.get(doc.getDocumentElement());
+		assertEquals(3, result.size());
+		assertTrue(result.contains("Item1"));
+		assertTrue(result.contains("Item2"));
+		assertTrue(result.contains("Item3"));
+	}
+
+	@Test
+	public void testGetMethodForArray() throws Exception {
+		Method method = Main.class.getMethod("getArray", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		String[] result = (String[]) pgm.get(doc.getDocumentElement());
+		assertEquals(3, result.length);
+		assertEquals("Item1", result[0]);
+		assertEquals("Item2", result[1]);
+		assertEquals("Item3", result[2]);
+	}
+
+}

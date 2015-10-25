@@ -1,0 +1,23 @@
+package uk.co.cleopatra.jxlite.examples;
+
+import uk.co.cleopatra.jxlite.annotations.Path;
+
+public interface PersonWithAddress1 {
+	@Path("forename")
+	String getForename();
+
+	@Path("surname")
+	String getSurname();
+
+	@Path("@age")
+	int getAge();
+	
+    @Path("address/line1")
+    String getAddressLine1();
+    
+    @Path("address/line2")
+    String getAddressLine2();
+    
+    @Path("address/postcode")
+    String getPostcode();
+}

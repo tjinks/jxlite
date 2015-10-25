@@ -1,0 +1,22 @@
+package uk.co.cleopatra.jxlite;
+
+public class JxLiteException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	public JxLiteException() {
+	}
+
+	public JxLiteException(String message) {
+		super(message);
+	}
+
+	public JxLiteException(Throwable cause) {
+		super(cause);
+	}
+
+	public JxLiteException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+}

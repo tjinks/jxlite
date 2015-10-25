@@ -1,0 +1,16 @@
+package uk.co.cleopatra.jxlite.converters.datetime;
+
+import uk.co.cleopatra.jxlite.converters.TextContentConverter;
+
+public class DateConverter extends TextContentConverter {
+
+	public DateConverter(Class<?> objectType) {
+		super(objectType);
+	}
+
+	@Override
+	public Object stringToObject(String nodeValue) {
+		return null;
+	}
+
+}

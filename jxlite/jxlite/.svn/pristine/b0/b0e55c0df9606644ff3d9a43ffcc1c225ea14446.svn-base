@@ -1,0 +1,10 @@
+package uk.co.cleopatra.xmlmap;
+
+
+public class IntegerTypeConverter extends PrimitiveTypeConverter {
+	
+	public IntegerTypeConverter() {
+		super(Integer.TYPE, new IntegerClassConverter());
+	}
+
+}

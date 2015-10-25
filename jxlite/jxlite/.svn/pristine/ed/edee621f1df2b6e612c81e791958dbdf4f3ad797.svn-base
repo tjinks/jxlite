@@ -1,0 +1,25 @@
+package uk.co.cleopatra.xmlmap;
+
+import javax.xml.xpath.XPathConstants;
+
+import org.w3c.dom.Node;
+
+public class IntegerClassConverter extends NodeConverterBase {
+
+	public IntegerClassConverter() {
+		super(Integer.class);
+	}
+	
+	@Override
+	protected Object doConvert(Node context)
+			throws Exception {
+		double d = (Double) evaluate(context, XPathConstants.NUMBER);
+		double result = Math.floor(d);
+		if (result != d || Math.abs(result) > Integer.MAX_VALUE) {
+			throw new XmlMapException("Invalid value for integer");
+		}
+		return (int) result;
+	}
+	
+
+}

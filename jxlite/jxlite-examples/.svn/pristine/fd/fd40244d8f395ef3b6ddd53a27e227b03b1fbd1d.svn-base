@@ -1,0 +1,11 @@
+package uk.co.cleopatra.xmlmap.examples;
+
+import uk.co.cleopatra.xmlmap.annotations.Path;
+
+public interface MultiLineAddress {
+	@Path("lines/line")
+	String[] getAddressLines();
+	
+	@Path("postcode")
+	String getPostcode();
+}

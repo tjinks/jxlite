@@ -1,0 +1,5 @@
+package uk.co.cleopatra.xmlmap;
+
+public interface UnmarshallerFactory {
+	<T> Unmarshaller<T> build(Class<T> intf, NodeConverterRegistry nodeConverterRegistry);
+}

@@ -1,0 +1,53 @@
+package uk.co.cleopatra.xmlmap;
+
+import java.util.HashSet;
+
+import uk.co.cleopatra.xmlmap.converters.BooleanClassConverter;
+import uk.co.cleopatra.xmlmap.converters.BooleanTypeConverter;
+import uk.co.cleopatra.xmlmap.converters.CharacterClassConverter;
+import uk.co.cleopatra.xmlmap.converters.CharacterTypeConverter;
+import uk.co.cleopatra.xmlmap.converters.IntegerClassConverter;
+import uk.co.cleopatra.xmlmap.converters.IntegerTypeConverter;
+import uk.co.cleopatra.xmlmap.converters.NodeConverter;
+import uk.co.cleopatra.xmlmap.converters.StringConverter;
+import uk.co.cleopatra.xmlmap.converters.XmlNodeConverter;
+
+class NodeConverterRegistryImpl implements NodeConverterRegistry {
+	private final HashSet<NodeConverter> registry;
+	
+	NodeConverterRegistryImpl() {
+		super();
+		registry = new HashSet<NodeConverter>();
+		registerDefaultConverters();
+	}
+	
+	public NodeConverter register(NodeConverter nodeConverter) {
+		NodeConverter previous = lookup(nodeConverter.getObjectType());
+		if (previous != null) {
+			registry.remove(previous);
+		}
+		registry.add(nodeConverter);
+		return previous;
+	}
+	
+	public NodeConverter lookup(Class<?> cl) {
+		for (NodeConverter nodeConverter : registry) {
+			if (nodeConverter.getObjectType().equals(cl)) {
+				return nodeConverter;
+			}
+		}
+		return null;
+	} 
+	
+	private void registerDefaultConverters() {
+		register(new IntegerClassConverter());
+		register(new IntegerTypeConverter());
+		register(new BooleanClassConverter());
+		register(new BooleanTypeConverter());
+		register(new StringConverter());
+		register(new XmlNodeConverter());
+		register(new CharacterClassConverter());
+		register(new CharacterTypeConverter());
+	}
+		
+}

@@ -1,0 +1,60 @@
+package uk.co.cleopatra.xmlmap;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ProxyFactoryBuilderImplTest extends XmlTestBase {
+	private ProxyFactoryBuilder builder;
+	
+	@NamespaceList("a=http://xxx")
+	private interface TestInterface {
+		@Path("a:intElement")
+		int getIntElement();
+		
+		@Path("a:textElement")
+		String getTextElement();
+		
+		@Path("a:name")
+		Name getName();
+	}
+	
+
+	@NamespaceList("a=http://xxx")
+	private interface Name {
+		@Path("a:forename")
+		String getForename();
+		
+		@Path("a:surname")
+		String getSurname();
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		builder = new ProxyFactoryBuilderImpl(compiler);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testPrimtiveTypes() {
+		ProxyFactory factory = builder.build(TestInterface.class);
+		TestInterface result = (TestInterface) factory.instanceFromElement(doc.getDocumentElement());
+		assertEquals("abc123", result.getTextElement());
+		assertEquals(666, result.getIntElement());
+	}
+	
+	@Test
+	public void testChildInterface() {
+		ProxyFactory factory = builder.build(TestInterface.class);
+		TestInterface result = (TestInterface) factory.instanceFromElement(doc.getDocumentElement());
+		Name name = result.getName();
+		assertEquals("fred", name.getForename());
+		assertEquals("bloggs", name.getSurname());
+	}
+
+}

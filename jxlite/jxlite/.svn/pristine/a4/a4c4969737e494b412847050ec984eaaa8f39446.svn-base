@@ -1,0 +1,9 @@
+package uk.co.cleopatra.xmlmap;
+
+public class XmlMapFacade {
+	private static ProxyFactoryBuilder builder = new ProxyFactoryBuilderImpl(new XPathCompiler());
+	
+	public static ProxyFactory createProxyFactory(Class<?> intf) {
+		return builder.build(intf);
+	}
+}
