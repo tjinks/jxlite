@@ -12,12 +12,14 @@ public abstract class JxLiteException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * These exceptions 'probably' indicate an error by the client program.
+	 */
 	@SuppressWarnings("unchecked")
-	private static final List<?> PROBABLE_CLIENT_ERRORS = Arrays.asList(
-			SAXException.class, XPathException.class,
+	private static final List<?> PROBABLE_CLIENT_ERRORS = Arrays.asList(SAXException.class, XPathException.class,
 			FileNotFoundException.class);
 
-	public JxLiteException() {
+	protected JxLiteException() {
 	}
 
 	protected JxLiteException(String message) {
@@ -32,14 +34,22 @@ public abstract class JxLiteException extends RuntimeException {
 		super(message, cause);
 	}
 
+	/**
+	 * Converts an arbitrary exception to an appropriate instance of
+	 * JxLiteException
+	 * 
+	 * @param e
+	 *            Exception to convert
+	 * @return If e is already an instance of JxLiteException then e, otherwise
+	 *         a JxLiteException instance that wraps e
+	 */
 	public static JxLiteException convert(Throwable e) {
 		if (e instanceof JxLiteException) {
 			return (JxLiteException) e;
-		}
-		if (PROBABLE_CLIENT_ERRORS.contains(e.getClass())) {
+		} else if (PROBABLE_CLIENT_ERRORS.contains(e.getClass())) {
 			return new JxLiteClientException(e);
+		} else {
+			return new JxLiteSystemException(e);
 		}
-		return new JxLiteSystemException(e);
 	}
-
 }
