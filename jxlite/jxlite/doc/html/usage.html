@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../css/jxlite.css">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>JxLite - Usage</title>
+</head>
+<body>
+	<a href="processing.html">Previous</a>&nbsp;
+	<a href="contents.html">TOC</a>
+	<h1>Using JxLite<br></h1> 
+	<p>
+	This section describes in more detail how to use JxLite.
+	</p> 
+	<h2>Unmarshallers</h2>
+	<p>
+	Unmarshalling of XML into Java objects is performed by an instance of the JxLite <span class="inlcode">Unmarshaller</span>
+	interface. An unmarshaller encapsulates the rules for converting an XML element into an instance of a Java interface.
+	</p>
+	<p>
+	You obtain an unmarshaller by calling the static <span class="inlcode">JxLite.UnmarshallerFor</span> method. This method
+	takes a single parameter, which is the Java interface into which XML data is to be marshalled. E.g.
+	</p>
+	<div class="code">
+	Unmarhsaller unmarshaller = JxLite.UnmarshallerFor(Person.class);
+	</div>
+	<p>
+	The type passed to <span class="inlcode">UnmarshallerFor</span> must be an interface. This interface must meet
+	the following conditions:
+	</p>
+	<ul>
+		<li>It (or a superinterface) must have at least one method with a <span class="inlcode">@Path</span> annotation.
+		(Typically all methods will have).
+		<li>Each such method must take no parameters and must return one of the following: 
+		<ul>
+			<li> One of the Java primitive types int, char or boolean
+			<li> A wrapper object for the above types (e.g. java.lang.Integer)
+			<li> String
+			<li> An interface which itself meets these conditions
+			<li> An array, List, Collection or Iterable of the above types
+		</ul> 
+	</ul>
+	<p>
+	Once created, you use an unmarshaller by calling its <span class="inlcode">unmarshal</span> method. This takes a 
+	single parameter which is either an <span class="inlcode">org.w3c.dom.Element</span> or an
+	<span class="inlcode">org.w3c.dom.Document</span>: 
+	</p>
+	<div class="code">
+	Person person = unmarshaller.unmarshal(element);
+	</div>
+	<p>
+	or
+	</p>
+	<div class="code">
+	Person person = unmarshaller.unmarshal(doc); // Same as unmarshaller.unmarshal(doc.getDocumentElement())
+	</div>
+	<p>
+	By specifying an element rather than a document you can use JxLite to process just the parts of an XML document that 
+	are of interest.
+	</p>
+	<p>
+	The <span class="inlcode">unmarshal</span> method may be called multiple times and is thread-safe.
+	</p>    
+	<h2>Multiplicity</h2>
+	<p> 
+	JxLite allows you to specify - to a limited extent - the number of nodes that an XPath expression may return. 
+	Usually this is implicit in a method's return type. If a method returns an array, List&lt;T&gt;,
+	Collection&lt;T&gt; or Iterable&lt;T&gt; then by default it is assumed that the associated XPath expression may return zero or more
+	nodes. (If the expression returns zero nodes then an empty collection of the appropriate type is returned). For any other object
+	type it is assumed that the expression may return zero or one node. If two or more nodes are returned then JxLite 
+	throws an exception when trying to unmarshal the document. If the method returns a primitive type (e.g. int) then the
+	expression must return exactly one node. This is summarised in the following table, where N is the number of nodes returned
+	by the XPath expression:
+	<table border="1">
+		<tr>
+			<th>Return Type</th>
+			<th colspan="3">Return Value</th>
+		<tr>
+			<th></th>
+			<th>N = 0</th>
+			<th>N = 1</th>
+			<th>N  &gt; 1</th>
+		</tr>
+		<tr>
+			<td>Array, List&lt;T&gt;, Collection&lt;T&gt; or Iterable&lt;T&gt;</td>
+			<td colspan="3">Array, List, Collection or Iterable
+			containing N elements</td>
+		<tr>
+		<tr>
+			<td>Other Object Type</td>
+			<td>null</td>
+			<td>Object instance</td>
+			<td>Throws JxLiteException</td>
+		</tr>
+		<tr>
+			<td>Primitive Type (e.g. int)</td>
+			<td>Throws JxLiteException</td>
+			<td>Primitive value</td>
+			<td>Throws JxLiteException</td>
+		</tr>
+	</table> 
+	<p>
+	This behaviour can be modified by adding a <span class="inlcode">@Required</span> annotation to a method:
+	</p>
+	<div class="code">
+    @Path("Surname")
+    @Required
+    String getSurname();
+	</div>
+	<p>
+	This will cause an exception to be thrown if the XPath expression does not return at least one node.
+	<p>
+	Any further constraints on the multiplicity of returned values must be coded explicitly. E.g.:
+	</p>
+	<div class="code">
+	People people = unmarshaller.unmarshal(doc);
+	if (people.getPeople.size() &gt; 1000) {
+	    throw new Exception("Too many people!");
+	}
+	</div>  
+	<h2>Default Values</h2>
+	<p>
+	For methods whose return type isn't some sort of collection the 'default default' return value is null. This is 
+	the value returned when the
+	associated XPath expression returns no nodes (unless the return type is a primitive type, in which case we can't return null
+	so an exception is thrown instead). The default return value can be changed using one of the following annotations:
+	</p>
+	<ul>
+		<li>@DefaultBoolean</li>
+		<li>@DefaultInt</li>
+		<li>@DefaultString</li>
+	</ul>
+	<p>
+	E.g.
+	</p>
+	<div class="code">
+	@Path("middle-initial")
+	@DefaultString("")
+	String getMiddleInitial();
+	
+	@Path("@age")
+	@DefaultInt(-1)
+	int getAge();
+	</div>
+	<h2>XML Namespaces</h2>
+	<p>
+	The examples we've seen so far haven't used XML namespaces. (Or, to be strictly accurate, everything has been in the global
+	namespace). In order for an XPath expression to refer to elements or attributes in other namespaces those
+	namespaces must be associated with a prefix. JxLite provides the <span class="inlcode">@NamespaceList</span> 
+	annotation for this.
+	</p>
+	<p> 
+	Consider the following XML:
+	</p>
+	<div class="code">
+&lt;nameAndAddress xmlns="http://jxlite/names" xmlns:a="http://jxlite/addresses"&gt;
+    &lt;name&gt;
+        &lt;forename&gt;Fred&lt;/forename&gt;
+        &lt;surname&gt;Bloggs&lt;/surname&gt;
+    &lt;/name&gt;
+    &lt;a:address a:houseNumber="12"&gt;
+        &lt;a:postcode&gt;XW1 1XW&lt;/a:postcode&gt;
+    &lt;/a:address&gt;
+&lt;/nameAndAddress&gt;
+	</div>
+	<p>
+	We can unmarshal documents like this into the following Java interface:
+	</p>
+	<div class="code">
+package uk.co.cleopatra.jxlite.examples;
+
+import uk.co.cleopatra.jxlite.annotations.NamespaceList;
+import uk.co.cleopatra.jxlite.annotations.Path;
+
+@NamespaceList({"n=http://jxlite/names", "a=http://jxlite/addresses"})
+public interface NameAndAddress {
+    @Path("n:name/n:forename")
+    String getForename();
+	
+    @Path("n:name/n:surname")
+    String getSurname();
+	
+    @Path("a:address/@a:houseNumber")
+    int getHouseNumber();
+	
+    @Path("a:address/a:postcode")
+    String getPostcode();
+}
+	</div>
+	<p>
+	Note that XPath expressions do not support default namespaces. Therefore we have to provide an
+	explicit prefix for the <span class="inlcode">http://jxlite/names</span> namespace even though there is no corresponding prefix in the
+	XML itself.  
+	</p>
+	<a href="processing.html">Previous</a>&nbsp;
+	<a href="contents.html">TOC</a>
+</body>
+</html>

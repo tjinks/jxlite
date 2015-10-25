@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../css/jxlite.css">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>JxLite - Introduction</title>
+</head>
+<body>
+	<a href="contents.html">TOC</a>&nbsp;&nbsp;<a href="processing.html">Next</a>
+	<h1>Introduction</h1>
+	JxLite is a light-weight Java API for reading XML. It allows XML
+	input to be transformed into a set of Java classes. The transformation
+	rules are specified using Java interfaces and annotations.
+	<p>
+	As a simple example, consider the following XML document:
+	<div class="code">
+&lt;person age="21"&gt;
+    &lt;forename&gt;Fred&lt;/forename&gt; 
+    &lt;surname&gt;Bloggs&lt;/surname&gt; 
+&lt;/person&gt;
+	</div>
+	<p>
+	To load this document (or a similar one) into Java we first define the Java interface that we would like to 
+	get the XML data into:
+	<div class="code">
+package uk.co.cleopatra.jxlite.examples;
+
+public interface Person {
+    String getForename();
+    String getSurname();
+    int getAge();
+}
+	</div>  
+	<p>
+	We now decorate this interface with annotations that describe where in the input document 
+	the various 'get' methods are to obtain their data. The parameter to each @Path annotation is an XPath 
+	expression relative to the root of the document:
+	<div class="code">
+package uk.co.cleopatra.jxlite.examples;
+
+import uk.co.cleopatra.jxlite.annotations.Path;
+
+public interface Person {
+    @Path("forename")
+    String getForename();
+
+    @Path("surname")
+    String getSurname();
+
+    @Path("@age")
+    int getAge();
+}
+	</div> 
+	<p>
+	We can now create an JxLite unmarshaller that will unmarshal the input XML into an instance of Person. 
+	(This code assumes that the XML file is available as a Java resource. We use the JxLite utility class 
+	<em>XmlDocumentLoader</em> to read this resource into a Document object).
+	<div class="code">
+package uk.co.cleopatra.jxlite.examples;
+
+import org.w3c.dom.Document;
+
+import uk.co.cleopatra.jxlite.Unmarshaller;
+import uk.co.cleopatra.jxlite.JxLite;
+import uk.co.cleopatra.jxlite.utils.XmlDocumentLoader;
+
+public class Example1 {
+    public static void main(String[] args) {
+    Document doc = XmlDocumentLoader
+                .parseResource("uk/co/cleopatra/jxlite/examples/xmldocs/person.xml");
+        Unmarshaller&lt;Person&gt; unmarshaller = JxLite.unmarshallerFor(Person.class);
+        Person person = unmarshaller.unmarshal(doc);
+        System.out.println(person.getForename() + " " + person.getSurname() + ", " + person.getAge());
+    }
+}	
+	</div> 
+	<p>
+	Note that we have not actually provided an implementation of the <em>Person</em> interface. Instead,
+	at runtime JxLite creates a Java
+	<a href="http://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Proxy.html">Proxy</a> 
+    object that implements this interface. The proxy maps the contents of the XML
+	document to the return values of the corresponding methods.  
+	<br>
+	<p>
+	Of course, it is unlikely that we would need to deal with XML this simple. 
+	A (slightly) more realistic example is a document containing multiple people:
+	<div class="code">
+&lt;people&gt;
+    &lt;person age="21"&gt;
+        &lt;forename&gt;Fred&lt;/forename&gt;
+        &lt;surname&gt;Bloggs&lt;/surname&gt;
+    &lt;/person&gt;
+    &lt;person age="32"&gt;
+        &lt;forename&gt;Sue&lt;/forename&gt;
+        &lt;surname&gt;Smith&lt;/surname&gt;
+    &lt;/person&gt;
+    &lt;person age="88"&gt;
+        &lt;forename&gt;Elizabeth&lt;/forename&gt;
+        &lt;surname&gt;Windsor&lt;/surname&gt;
+    &lt;/person&gt;
+&lt;/people&gt;
+	</div> 
+	<p>
+	We would like to unmarshal this document into a list of <em>Person</em> instances. To do this we create a  
+	new interface representing the document's root element, with a method that returns a list of people: 
+	<div class="code">
+package uk.co.cleopatra.jxlite.examples;
+
+import java.util.List;
+
+import uk.co.cleopatra.jxlite.annotations.Path;
+
+public interface People {
+    @Path("person")
+    List&lt;Person&gt; getPeople();
+}
+	</div>
+	<p>
+	When applied to the root of the above document, the XPath expression "person" evaluates to a list of 
+	&lt;person&gt; elements.
+	JxLite unmarshals these elements into a list of Person instances. This list is then returned by a call to 
+	<em>getPeople</em>. 
+	Example code to perform the unmarshalling and display the results is similar to that above:
+	<div class="code">
+package uk.co.cleopatra.jxlite.examples;
+
+import org.w3c.dom.Document;
+
+import uk.co.cleopatra.jxlite.Unmarshaller;
+import uk.co.cleopatra.jxlite.JxLite;
+import uk.co.cleopatra.jxlite.utils.XmlDocumentLoader;
+
+public class Example2 {
+
+    public static void main(String[] args) {
+         Document doc = XmlDocumentLoader
+                .parseResource("uk/co/cleopatra/jxlite/examples/xmldocs/people.xml");
+        Unmarshaller&lt;People&gt; unmarshaller = JxLite.unmarshallerFor(People.class);
+        People people = unmarshaller.unmarshal(doc);
+        for (Person person : people.getPeople()) {
+            System.out.println(person.getForename() + " " + person.getSurname()
+                    + ", " + person.getAge());
+        }
+    }
+}
+	</div> 
+	<a href="contents.html">TOC</a>&nbsp;&nbsp;<a href="processing.html">Next</a>
+</body>
+</html>

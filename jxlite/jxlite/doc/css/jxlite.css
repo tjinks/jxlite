@@ -1,0 +1,15 @@
+@CHARSET "ISO-8859-1";
+
+/* Style for code blocks */
+.code {
+	color: rgb(0, 0, 100);
+	background: rgb(200, 200, 200);
+	font-family: monospace;
+	white-space: pre;
+	margin-left: 1em;
+}
+
+/* Style for inline code elements */
+.inlcode {
+	font-family: monospace;
+}

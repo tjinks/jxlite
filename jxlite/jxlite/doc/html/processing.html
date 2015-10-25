@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../css/jxlite.css">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>JxLite - Processing</title>
+</head>
+<body>
+	<a href="introduction.html">Previous</a>&nbsp;
+	<a href="contents.html">TOC</a>&nbsp;
+    <a href="usage.html">Next</a>
+	<h1>Processing</h1> 
+	<p>
+	This section provides an overview of the way in which JxLite processes an XML document. 
+	<h2>Basic Processing Rules</h2>
+	<p>
+	When an interface method which has a @Path annotation is called, the value that is returned depends on three things:
+	<ul>
+		<li>The XPath specified by the @Path annotation
+		<li>The method's return type
+		<li>The implicit current XPath context (always be an XML Element)
+	</ul>
+	<p>
+	JxLite's initial XPath context is set from the argument passed to the <em>unmarshal</em> method. This can  
+	be either an <span class="inlcode">org.w3c.dom.Element</span> or an 
+	<span class="inlcode">org.w3c.dom.Document</span> (in the second case the context becomes the document's root element). 
+	Any relative XPath expressions are taken to be relative to this context. So, returning to the <em>Person</em> interface 
+	from the introduction:
+	<div class="code">	
+public interface Person {
+    @Path("forename")
+    String getForename();
+
+    @Path("surname")
+    String getSurname();
+
+    @Path("@age")
+    int getAge();
+}
+	</div> 
+	<p>
+	The first path annotation says that the return value of the <em>getForename</em>
+	method is obtained from an element named 'forename' immediately below
+	the current XPath context element. The return type is String, so
+	JxLite simply takes the text content of this element and returns it.
+	If there is no such element then JxLite returns <span class="inlcode">null</span>. (If there is more
+	than one forename element then JxLite will throw an exception - more on this later).
+	<p>
+	Processing of the <em>getSurname</em> method is essentially identical.
+	<p>
+	The path annotation for the <em>getAge</em> method specifies that the return value is obtained from an attribute on the 
+	current context element named 'age'. The return value is of type <span class="inlcode">int</span>, 
+	so the text value of this attribute 
+	is obtained and
+	converted to an integer. If the conversion fails then JxLite throws an exception. JxLite also throws an exception if
+	the attribute is not present. (This is because we can't return <span class="inlcode">null</span> in this case. 
+	If the attribute was optional we would need to redeclare the return type to be <span class="inlcode">java.lang.Integer</span> 
+	rather than the primitive type <span class="inlcode">int</span>). 
+	<p>
+	JxLite has built-in rules for converting the value of an XML node to any of the following Java data types:
+	<ul>
+		<li><span class="inlcode">java.lang.String</span> 
+		<li><span class="inlcode">int</span> 
+		<li><span class="inlcode">java.lang.Integer</span> 
+		<li><span class="inlcode">boolean</span> 
+		<li><span class="inlcode">java.lang.Boolean</span>
+		<li><span class="inlcode">char</span>
+		<li><span class="inlcode">java.lang.Character</span>
+		<li><span class="inlcode">double</span>
+		<li><span class="inlcode">java.lang.Double</span>
+		<li><span class="inlcode">java.util.Date</span>
+		<li><span class="inlcode">java.util.Calendar</span>
+	</ul>
+	<p> 
+	(The last two expect the input to be a full a XML date/time with an optional timezone - e.g. 
+	<span class="inlcode">2014-04-25T18:31:04Z</span>)  
+	<p>
+	Additionally, a method can be declared to return a List, Collection, Iterable or array
+	of the above types, in which case the XPath expression may return multiple nodes. Each node is 
+	converted to the appropriate Java type 
+	as above, and the resulting (zero or more) values are placed in the returned collection.
+	<h2>Conversions from XML to Java Types</h2>
+	<p>
+	The following table describes how XML nodes are converted to instances of the Java types listed above. 'Trim' indicates
+	whether or not leading and trailing whitespace characters are removed before attempting the conversion. If the conversion
+	cannot be performed as described then a JxLiteClientException is thrown. 
+	</p>
+	<table border="1">
+		<tr>
+			<th>Target Type</th>
+			<th>Conversion Rules</th>
+			<th>Trim</th>
+		</tr>
+		<tr>
+			<td>int<br>java.lang.Integer</td>
+			<td>The text content of the XML node is converted to
+			an integer. If the result is outside the valid range
+			for a Java int, then a JxLiteClientException is thrown.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>double<br>java.lang.Double</td>
+			<td>The text content of the XML node is converted to
+			a double.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>boolean<br>java.lang.Boolean</td>
+			<td>The text content of the XML node, which must be one of
+			'yes', 'no', 'true' or 'false' is converted to a boolean value. </td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>char<br>java.lang.Character</td>
+			<td>The text content of the XML node, which must be a single character,
+			is returned. </td>
+			<td>N</td>
+		</tr>
+		<tr>
+			<td>java.lang.String</td>
+			<td>The text content of the XML node is returned.</td>
+			<td>N</td>
+		</tr>
+		<tr>
+			<td>java.lang.Calendar<br>java.lang.Date</td>
+			<td>The text content of the XML node, which must be formatted as an xs:dateTime 
+			(e.g. <span class="inlcode">2014-04-27T20:06:44+01:00</span>),
+			is parsed into the specified Java type.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>org.w3c.dom.Node</td>
+			<td>The input XML node is simply returned. (This might be useful if you need to parse
+			part of an XML document but pass the rest on unchanged for further processing).</td>
+			<td>N/A</td>
+		</tr>
+	</table>
+	<h2>Processing XML Trees</h2>
+	<p>
+	Of course most XML is more complex than this. Suppose the <em>person</em> XML
+	format is enhanced to include an address:
+	<div class="code">
+&lt;person age="21"&gt;
+    &lt;forename&gt;Fred&lt;/forename&gt; 
+    &lt;surname&gt;Bloggs&lt;/surname&gt; 
+    &lt;address&gt;
+      &lt;line1&gt;3 The Avenue&lt;/line&gt;
+      &lt;line2&gt;Oxwood&lt;/line&gt;
+      &lt;postcode&gt;XW1 1XW&lt;/postcode&gt;
+    &lt;/address&gt;
+&lt;/person&gt;
+	</div>
+	<p>
+	One option - which might be appropriate here - would be to modify the <span class="inlcode">Person</span> interface 
+	to include the additional address data directly:
+	<div class="code">
+public interface PersonWithAddress1 {
+    @Path("forename")
+    String getForename();
+
+    @Path("surname")
+    String getSurname();
+
+    @Path("@age")
+    int getAge();
+    
+    @Path("address/line1")
+    String getAddressLine1();
+    
+    @Path("address/line2")
+    String getAddressLine2();
+    
+    @Path("address/postcode")
+    String getPostcode();
+}
+	</div>
+	<p>
+	However for more deeply nested XML structures, 
+	or those containing arbitrarily repeated elements, this would
+	quickly become impractical. What we would like is to create a tree of Java objects that closely matches the
+	XML structure. JxLite supports this by allowing the return type of an interface method to be another interface that can itself
+	be unmarshalled by JxLite. So we can define a new interface <span class="inlcode">Address</span> and modify 
+	<span class="inlcode">Person</span> to have a method which returns an instance of this interface:
+	<div class="code">
+public interface Address {
+    @Path("line1")
+    String getLine1();
+
+    @Path("line2")
+    String getLine2();
+	
+    @Path("postcode")
+    String getPostcode();
+}
+	</div>
+	<br>
+	<div class="code">
+public interface PersonWithAddress2 {
+    @Path("forename")
+    String getForename();
+
+    @Path("surname")
+    String getSurname();
+
+    @Path("@age")
+    int getAge();
+    
+    @Path("address")
+    Address getAddress();
+}
+	</div>
+	<p>
+	When the <span class="inlcode">getAddress</span> method is invoked, JxLite changes the current XPath context to be
+	the document's address element and then unmarshals the contents of this element into an <span class="inlcode">Address</span> instance.
+	This ensures that the XPaths specified in the <span class="inlcode">Address</span> interface are interpreted
+	correctly (and not as being relative to the original person element).
+	<h2>Processing Collections</h2>	
+	<p>
+	As mentioned above, JxLite can handle XPaths that return multiple nodes. JxLite is alerted to the 
+	fact that an XPath expression may return multiple nodes by declaring the associated method to return an
+	array, <span class="inlcode">java.util.List</span>, 
+	<span class="inlcode">java.util.Collection</span> or
+	<span class="inlcode">java.lang.Iterable</span>. As an example let's change the XML address format above to allow mutliple
+	address lines (rather than just two):
+	<div class="code">
+&lt;address&gt;
+    &lt;lines&gt;
+        &lt;line&gt;Flat 5&lt;/line&gt;	
+        &lt;line&gt;3 The Avenue&lt;/line&gt;	
+        &lt;line&gt;Wittering&lt;/line&gt;	
+        &lt;line&gt;Oxwood&lt;/line&gt;
+    &lt;/lines&gt;
+    &lt;postcode&gt;XW1 1XW&lt;/postcode&gt;
+&lt;address&gt;	
+	</div>
+	<p>
+	We can declare a matching Java interface as follows:
+	<div class="code">
+public interface MultiLineAddress {
+    @Path("lines/line")
+    String[] getAddressLines();
+	
+    @Path("postcode")
+    String getPostcode();
+}
+	</div>
+	<p>
+	A call to <span class="inlcode">getAddressLines</span> will now return an array of strings, containing the address lines in the 
+	same order in which they appear in the XML document. 
+	<h2>Caching</h2>
+	<p>
+	When you call the <span class="inlcode">Unmarshaller.unmarshal</span> method, JxLite actually reads the entire XML document
+	(or the portion below the element passed to <span class="inlcode">unmarshal</span>), extracts the return value for
+	each interface method and caches these values. Therefore if you call the same interface method twice you will get the same
+	Java object back each time. An important consequence is that you shouldn't modify the returned objects. E.g. going back to the
+	<span class="inlcode">People</span> class from the introduction:
+	<div class="code">
+	People people = unmarshaller.unmarshal(doc);
+	List&lt;Person&gt; allPeople = people.getPeople();
+	allPeople.clear();
+	allPeople = people.getPeople(); // Returns an empty list!
+	</div>
+	<a href="introduction.html">Previous</a>&nbsp;
+	<a href="usage.html">TOC</a>&nbsp;
+    <a href="processing.html">Next</a>
+</body>
+</html>
