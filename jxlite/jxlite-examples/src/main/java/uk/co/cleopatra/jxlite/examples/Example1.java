@@ -18,5 +18,4 @@ public class Example1 {
 				+ ", " + person.getAge());
 		System.out.println(person);
 	}
-
 }

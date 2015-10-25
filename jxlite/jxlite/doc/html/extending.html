@@ -19,8 +19,11 @@
 		<li>Tell JxLite when to use this class to perform conversion.</li>
 	</ol>  
 	<p>
-	A custom converter class must implement the <span class="inlcode">NodeConverter</span> interface. The simplest way to do
-	this is to extend the <span class="inlcode">NodeConverterBase</span> abstract class.
+	A custom converter class must implement the 
+	<span class="inlcode">uk.co.cleopatra.jxlite.converters.NodeConverter</span> interface. The simplest way 
+	to do
+	this if you just want to convert an attribute or an element containing simple text content is to extend  
+	<span class="inlcode">uk.co.cleopatra.jxlite.converters.TextContentConverter</span>.
 	<p>
 	Once you have defined a custom converter class you need to tell JxLite when to use it. This can be done in one of two ways:
 	<ol>	
@@ -126,7 +129,8 @@ public interface TextOutput {
 	<h2>Registering Custom Converters</h2>
 	<p>
 	An alternative to using the <span class="inlcode">@ConvertUsing</span> attribute is to register a converter for
-	use whenever JxLite encounters an interface method that returns a particular type.
+	use whenever JxLite encounters an interface method that returns a particular type. This can be done for the
+	
 	
 	 
 	Unmarshalling of XML into Java objects is performed by an instance of the JxLite <span class="inlcode">Unmarshaller</span>
