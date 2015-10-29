@@ -13,7 +13,7 @@ public class Example8 {
 		Document doc = XmlDocumentLoader
 				.parseResource("uk/co/cleopatra/jxlite/examples/xmldocs/textoutput2.xml");
 		NodeConverterRegistry registry = JxLite.getNodeConverterRegistry();
-		registry.register(new ColorConverter2());
+		registry.register(new ColorConverter());
 		Unmarshaller<TextOutputList> unmarshaller = JxLite
 				.unmarshallerFor(TextOutputList.class, registry);
 		TextOutputList result = unmarshaller.unmarshal(doc);

@@ -16,6 +16,5 @@ public class Example1 {
 		Person person = unmarshaller.unmarshal(doc);
 		System.out.println(person.getForename() + " " + person.getSurname()
 				+ ", " + person.getAge());
-		System.out.println(person);
 	}
 }

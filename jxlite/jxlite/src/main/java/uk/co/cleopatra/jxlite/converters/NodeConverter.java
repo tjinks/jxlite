@@ -3,7 +3,7 @@ package uk.co.cleopatra.jxlite.converters;
 import org.w3c.dom.Node;
 
 /**
- * Instances of this interface convert XML nodes to a Java objects of a
+ * Instances of this interface convert XML nodes to Java objects of a
  * particular type.
  */
 public interface NodeConverter {

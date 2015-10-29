@@ -21,5 +21,4 @@ public class Example4 {
 		System.out.println(address.getLine2());
 		System.out.println(address.getPostcode());
 	}
-
 }
