@@ -1,4 +1,4 @@
-package uk.co.cleopatra.jxlite;
+package uk.co.cleopatra.jxlite.converters;
 
 import static org.junit.Assert.*;
 
@@ -9,9 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Node;
 
-import uk.co.cleopatra.jxlite.NodeConverterRegistry;
-import uk.co.cleopatra.jxlite.converters.BooleanTypeConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverter;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 
 public class NodeConverterRegistryTest {
 	private NodeConverterRegistry registry;
@@ -70,7 +69,7 @@ public class NodeConverterRegistryTest {
 	@Test
 	public void testLookup() {
 		NodeConverter result = registry.lookup(Boolean.TYPE);
-		assertTrue(result instanceof BooleanTypeConverter);
+		assertTrue(result instanceof BooleanClassConverter);
 	}
 
 }

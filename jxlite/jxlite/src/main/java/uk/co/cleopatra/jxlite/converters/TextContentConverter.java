@@ -11,7 +11,7 @@ public abstract class TextContentConverter extends NodeConverterBase {
 	
 	private final StringConverter stringConverter = new StringConverter();
 
-	public TextContentConverter(Class<?> objectType) {
+	protected TextContentConverter(Class<?> objectType) {
 		super(objectType);
 	}
 
@@ -25,6 +25,6 @@ public abstract class TextContentConverter extends NodeConverterBase {
 		}
 	}
 
-	abstract public Object stringToObject(String nodeValue);
+	public abstract Object stringToObject(String nodeValue);
 
 }

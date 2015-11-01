@@ -10,12 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.cleopatra.jxlite.NamespaceListParser;
-import uk.co.cleopatra.jxlite.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.ProxyableGetMethod;
 import uk.co.cleopatra.jxlite.ProxyableGetMethodFactory;
 import uk.co.cleopatra.jxlite.UnmarshallerImpl;
 import uk.co.cleopatra.jxlite.annotations.NamespaceList;
 import uk.co.cleopatra.jxlite.annotations.Path;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 
 public class UnmarshallerImplTest extends XmlTestBase {
 	private UnmarshallerImpl<TestInterface> unmarshaller;

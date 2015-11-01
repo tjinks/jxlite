@@ -6,6 +6,7 @@ import java.util.HashMap;
 import javax.xml.namespace.NamespaceContext;
 
 import uk.co.cleopatra.jxlite.annotations.NamespaceList;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 
 class UnmarshallerFactoryImpl implements UnmarshallerFactory {
 	private final HashMap<Class<?>, Unmarshaller<?>> unmarshallers = new HashMap<Class<?>, Unmarshaller<?>>();

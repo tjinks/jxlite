@@ -1,5 +1,9 @@
 package uk.co.cleopatra.jxlite;
 
+/**
+ * The exception that is thrown when JxLite encounters a condition that is
+ * (probably) due to an error in the client program. 
+ */
 public class JxLiteClientException extends JxLiteException {
 
 	private static final long serialVersionUID = 1L;

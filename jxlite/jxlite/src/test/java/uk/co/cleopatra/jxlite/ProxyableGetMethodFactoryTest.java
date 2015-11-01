@@ -14,23 +14,23 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import uk.co.cleopatra.jxlite.NamespaceListParser;
-import uk.co.cleopatra.jxlite.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.ProxyableGetMethod;
 import uk.co.cleopatra.jxlite.ProxyableGetMethodFactory;
 import uk.co.cleopatra.jxlite.annotations.ConvertUsing;
 import uk.co.cleopatra.jxlite.annotations.DefaultInt;
 import uk.co.cleopatra.jxlite.annotations.DefaultString;
 import uk.co.cleopatra.jxlite.annotations.Path;
-import uk.co.cleopatra.jxlite.converters.IntegerTypeConverter;
+import uk.co.cleopatra.jxlite.converters.IntegerClassConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverterBase;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.converters.TextContentConverter;
 
 public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 	private ProxyableGetMethodFactory factory;
 
 	private static class DoubleItConverter extends NodeConverterBase {
-		private final IntegerTypeConverter conv = new IntegerTypeConverter();
+		private final IntegerClassConverter conv = new IntegerClassConverter();
 
 		public DoubleItConverter() {
 			super(Integer.TYPE);

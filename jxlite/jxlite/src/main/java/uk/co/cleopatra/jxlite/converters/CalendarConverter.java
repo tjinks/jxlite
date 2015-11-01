@@ -1,9 +1,9 @@
-package uk.co.cleopatra.jxlite.converters.datetime;
+package uk.co.cleopatra.jxlite.converters;
 
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import uk.co.cleopatra.jxlite.converters.TextContentConverter;
+import uk.co.cleopatra.jxlite.converters.datetime.DateTimeParser;
 
 public class CalendarConverter extends TextContentConverter {
 

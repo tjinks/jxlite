@@ -3,8 +3,8 @@ package uk.co.cleopatra.jxlite.examples;
 import org.w3c.dom.Document;
 
 import uk.co.cleopatra.jxlite.JxLite;
-import uk.co.cleopatra.jxlite.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.Unmarshaller;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.utils.XmlDocumentLoader;
 
 public class Example8 {

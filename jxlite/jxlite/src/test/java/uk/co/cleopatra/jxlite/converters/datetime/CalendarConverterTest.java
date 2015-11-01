@@ -8,6 +8,8 @@ import java.util.TimeZone;
 
 import org.junit.Test;
 
+import uk.co.cleopatra.jxlite.converters.CalendarConverter;
+
 public class CalendarConverterTest {
 
 	@Test

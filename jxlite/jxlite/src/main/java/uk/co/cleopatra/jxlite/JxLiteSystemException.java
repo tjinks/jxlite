@@ -1,5 +1,9 @@
 package uk.co.cleopatra.jxlite;
 
+/**
+ * Class for exceptions that probably indicate an error within JxLite itself. Instances of this exception
+ * 'should' never be seen!
+ */
 public class JxLiteSystemException extends JxLiteException {
 
 	private static final long serialVersionUID = 1L;

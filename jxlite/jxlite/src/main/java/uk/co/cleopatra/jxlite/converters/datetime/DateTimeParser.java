@@ -1,15 +1,23 @@
 package uk.co.cleopatra.jxlite.converters.datetime;
 
+import uk.co.cleopatra.jxlite.converters.JxLiteDateFormatException;
 import uk.co.cleopatra.jxlite.converters.datetime.Token.Type;
 
-class DateTimeParser {
+/**
+ * An instance of this class holds data obtained by parsing an XML date/time.
+ */
+public class DateTimeParser {
 	private final Tokenizer tokenizer;
 	private int year, month, day, hour, minute, second;
 	private String tzString;
 	private Token current;
 
-	DateTimeParser(String text) {
-		tokenizer = new Tokenizer(text);
+	/**
+	 * Initialises a DateTimeParser instance from an xs:datetime formatted string
+	 * @param xsDateTime xs:datetime string (e.g. 2015-12-25T13:45:00Z)
+	 */
+	public DateTimeParser(String xsDateTime) {
+		tokenizer = new Tokenizer(xsDateTime);
 		current = tokenizer.next();
 		year = getInt(0, 9999);
 		skip('-');
@@ -28,30 +36,60 @@ class DateTimeParser {
 		}
 	}
 
+	/**
+	 * Returns the year represented by this instance
+	 * @return Year (e.g. 2015)
+	 */
 	public int getYear() {
 		return year;
 	}
 
+	/**
+	 * Returns the month represented by this instance
+	 * @return Month (1-12)
+	 */
 	public int getMonth() {
 		return month;
 	}
 
+	/**
+	 * Returns the day of the month represented by this instance
+	 * @return Day (1-31)
+	 */
 	public int getDay() {
 		return day;
 	}
 
+	/**
+	 * Returns the hour represented by this instance
+	 * @return Hour (0-23)
+	 */
 	public int getHour() {
 		return hour;
 	}
 
+	/**
+	 * Returns the minute represented by this instance
+	 * @return Minute (0-59)
+	 */
 	public int getMinute() {
 		return minute;
 	}
 
+	/**
+	 * Returns the second represented by this instance
+	 * @return Second (0-59)
+	 */
 	public int getSecond() {
 		return second;
 	}
 
+	/**
+	 * Returns the timezone represented by this instance 
+	 * @return The timezone extracted from the xs:datetime passed to the constructor, or null 
+	 * if it did not include a timezone. The value returned is always of the form GMT[+/-]HH:MM.
+	 * E.g. GMT+05:45
+	 */
 	public String getTzString() {
 		return tzString;
 	}

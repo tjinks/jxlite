@@ -5,8 +5,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Specified a list of namespaces and namespace prefixes that are to be used
+ * when interpreting XPath expressions
+ * 
+ * @see Path
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface NamespaceList {
+	/**
+	 * One or more strings of the form &lt;prefix&gt;=&lt;namespace&gt; - e.g.
+	 * a=http://mycompany.com/myproduct
+	 */
 	String[] value();
 }

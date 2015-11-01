@@ -8,6 +8,12 @@ import javax.xml.xpath.XPathException;
 
 import org.xml.sax.SAXException;
 
+/**
+ * Base class for exceptions thrown by JxLite.
+ * <p>
+ * Note that JxLiteException extends RuntimeException, so these exceptions do not have to be
+ * declared in a throws declaration.
+ */
 public abstract class JxLiteException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

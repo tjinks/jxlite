@@ -1,8 +1,8 @@
 package uk.co.cleopatra.jxlite;
 
-import uk.co.cleopatra.jxlite.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.Unmarshaller;
 import uk.co.cleopatra.jxlite.UnmarshallerFactory;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 
 public class MockUnmarshallerFactory implements UnmarshallerFactory {
 

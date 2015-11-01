@@ -2,7 +2,9 @@ package uk.co.cleopatra.jxlite.converters;
 
 import uk.co.cleopatra.jxlite.JxLiteClientException;
 
-
+/**
+ * Converts the text content of an XML node to a Java Boolean instance.
+ */
 public class BooleanClassConverter extends TextContentConverter {
 
 	public BooleanClassConverter() {

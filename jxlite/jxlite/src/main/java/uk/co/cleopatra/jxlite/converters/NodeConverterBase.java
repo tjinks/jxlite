@@ -43,9 +43,17 @@ public abstract class NodeConverterBase implements NodeConverter {
 		}
 	}
 	
+	/**
+	 * Derived classes can call this method to get the value of a particular XML node
+	 * @param node XML node 
+	 * @param returnType One of the values defined in the class {@code java.xml.xpath.XPathConstants}
+	 * @return The value of the node, converted to a Java object as specified by the {@code returnType} parameter
+	 * @throws Exception
+	 */
 	protected static Object evaluate(Node node, QName returnType) throws Exception {
 		return CURRENT_NODE.get().evaluate(node, returnType);
 	}
+	
 	
 	protected abstract Object doConvert(Node node) throws Exception;
 

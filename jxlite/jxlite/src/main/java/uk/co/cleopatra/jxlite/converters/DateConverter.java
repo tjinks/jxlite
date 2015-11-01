@@ -1,11 +1,9 @@
-package uk.co.cleopatra.jxlite.converters.datetime;
+package uk.co.cleopatra.jxlite.converters;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import org.w3c.dom.Node;
-
-import uk.co.cleopatra.jxlite.converters.NodeConverterBase;
 
 public class DateConverter extends NodeConverterBase {
 	private final static CalendarConverter CALENDAR_CONVERTER = new CalendarConverter();

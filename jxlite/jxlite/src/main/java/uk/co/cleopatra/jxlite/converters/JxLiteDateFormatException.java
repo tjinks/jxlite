@@ -1,4 +1,4 @@
-package uk.co.cleopatra.jxlite.converters.datetime;
+package uk.co.cleopatra.jxlite.converters;
 
 import uk.co.cleopatra.jxlite.JxLiteClientException;
 

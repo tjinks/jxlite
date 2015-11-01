@@ -6,12 +6,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.co.cleopatra.jxlite.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.Unmarshaller;
 import uk.co.cleopatra.jxlite.UnmarshallerFactory;
 import uk.co.cleopatra.jxlite.UnmarshallerFactoryImpl;
 import uk.co.cleopatra.jxlite.annotations.NamespaceList;
 import uk.co.cleopatra.jxlite.annotations.Path;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 
 public class UnmarshallerFactoryImplTest extends XmlTestBase {
 	private UnmarshallerFactory builder;

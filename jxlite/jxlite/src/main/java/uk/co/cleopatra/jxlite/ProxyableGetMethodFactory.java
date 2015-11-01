@@ -19,6 +19,7 @@ import uk.co.cleopatra.jxlite.annotations.Path;
 import uk.co.cleopatra.jxlite.annotations.Required;
 import uk.co.cleopatra.jxlite.converters.InterfaceConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverter;
+import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.converters.TextContentConverter;
 
 class ProxyableGetMethodFactory {
@@ -38,11 +39,9 @@ class ProxyableGetMethodFactory {
 		private final Object defaultValue;
 		private final boolean returnsPrimitive;
 
-		ProxyableGetMethodImpl(XPathExpression xPathExpression,
-				Multiplicity multiplicity, CollectionType collectionType,
-				NodeConverter nodeConverter, Object defaultValue) {
-			converter = new XPathConverter(xPathExpression, multiplicity,
-					collectionType, nodeConverter);
+		ProxyableGetMethodImpl(XPathExpression xPathExpression, Multiplicity multiplicity,
+				CollectionType collectionType, NodeConverter nodeConverter, Object defaultValue) {
+			converter = new XPathConverter(xPathExpression, multiplicity, collectionType, nodeConverter);
 			this.defaultValue = defaultValue;
 			switch (multiplicity) {
 			case ZERO_OR_ONE:
@@ -71,8 +70,7 @@ class ProxyableGetMethodFactory {
 	private final NamespaceContext namespaceContext;
 	private final NodeConverterRegistry nodeConverterRegistry;
 
-	ProxyableGetMethodFactory(UnmarshallerFactory unmarshallerFactory,
-			NamespaceContext namespaceContext,
+	ProxyableGetMethodFactory(UnmarshallerFactory unmarshallerFactory, NamespaceContext namespaceContext,
 			NodeConverterRegistry nodeConverterRegistry) {
 		this.namespaceContext = namespaceContext;
 		this.unmarshallerFactory = unmarshallerFactory;
@@ -86,8 +84,7 @@ class ProxyableGetMethodFactory {
 				return null;
 			}
 			if (method.getParameterTypes().length > 0) {
-				throw new JxLiteClientException("Method " + method.getName()
-						+ " may not take any parameters");
+				throw new JxLiteClientException("Method " + method.getName() + " may not take any parameters");
 			}
 			boolean required = (method.getAnnotation(Required.class) != null);
 			Object defaultValue = getDefaultValue(method);
@@ -96,66 +93,53 @@ class ProxyableGetMethodFactory {
 			Multiplicity multiplicity;
 			switch (collectionType) {
 			case NONE:
-				multiplicity = (required ? Multiplicity.EXACTLY_ONE
-						: Multiplicity.ZERO_OR_ONE);
+				multiplicity = (required ? Multiplicity.EXACTLY_ONE : Multiplicity.ZERO_OR_ONE);
 				break;
 			default:
 				if (defaultValue != null) {
-					throw new JxLiteClientException(
-							"Default value not supported for collection types");
+					throw new JxLiteClientException("Default value not supported for collection types");
 				}
-				multiplicity = (required ? Multiplicity.ONE_OR_MORE
-						: Multiplicity.ZERO_OR_MORE);
+				multiplicity = (required ? Multiplicity.ONE_OR_MORE : Multiplicity.ZERO_OR_MORE);
 				break;
 			}
 
 			NodeConverter nodeConverter;
-			ConvertUsing convertUsingAnnotation = method
-					.getAnnotation(ConvertUsing.class);
+			ConvertUsing convertUsingAnnotation = method.getAnnotation(ConvertUsing.class);
 			if (convertUsingAnnotation != null) {
-				nodeConverter = (NodeConverter) convertUsingAnnotation.value()
-						.newInstance();
+				nodeConverter = convertUsingAnnotation.value().newInstance();
 			} else {
 				nodeConverter = getNodeConverter(returnType);
 			}
-			if (nodeConverter instanceof TextContentConverter
-					&& defaultValue instanceof String) {
-				defaultValue = ((TextContentConverter) nodeConverter)
-						.stringToObject((String) defaultValue);
+			if (nodeConverter instanceof TextContentConverter && defaultValue instanceof String) {
+				defaultValue = ((TextContentConverter) nodeConverter).stringToObject((String) defaultValue);
 			}
-			XPathExpression xPathExpression = XPathCompiler.compile(
-					pathAnnotation.value(), namespaceContext);
-			return new ProxyableGetMethodImpl(xPathExpression, multiplicity,
-					collectionType, nodeConverter, defaultValue);
+			XPathExpression xPathExpression = XPathCompiler.compile(pathAnnotation.value(), namespaceContext);
+			return new ProxyableGetMethodImpl(xPathExpression, multiplicity, collectionType, nodeConverter,
+					defaultValue);
 		} catch (InvalidReturnTypeException e) {
-			throw new JxLiteClientException("Return type for method '"
-					+ method.getName() + "' is not supported");
+			throw new JxLiteClientException("Return type for method '" + method.getName() + "' is not supported");
 		} catch (Exception e) {
 			throw JxLiteException.convert(e);
 		}
 	}
 
 	private Object getDefaultValue(Method method) {
-		DefaultString defaultStringAnnotation = method
-				.getAnnotation(DefaultString.class);
+		DefaultString defaultStringAnnotation = method.getAnnotation(DefaultString.class);
 		if (defaultStringAnnotation != null) {
 			return defaultStringAnnotation.value();
 		}
-		DefaultInt defaultIntAnnotation = method
-				.getAnnotation(DefaultInt.class);
+		DefaultInt defaultIntAnnotation = method.getAnnotation(DefaultInt.class);
 		if (defaultIntAnnotation != null) {
 			return defaultIntAnnotation.value();
 		}
-		DefaultBoolean defaultBooleanAnnotation = method
-				.getAnnotation(DefaultBoolean.class);
+		DefaultBoolean defaultBooleanAnnotation = method.getAnnotation(DefaultBoolean.class);
 		if (defaultBooleanAnnotation != null) {
 			return defaultBooleanAnnotation.value();
 		}
 		return null;
 	}
 
-	private NodeConverter getNodeConverter(Type returnType)
-			throws InvalidReturnTypeException {
+	private NodeConverter getNodeConverter(Type returnType) throws InvalidReturnTypeException {
 		Class<?> cl = null;
 		if (returnType instanceof Class) {
 			cl = (Class<?>) returnType;
@@ -177,8 +161,7 @@ class ProxyableGetMethodFactory {
 				return result;
 			}
 			if (cl.isInterface()) {
-				Unmarshaller<?> unmarshaller = unmarshallerFactory.build(cl,
-						nodeConverterRegistry);
+				Unmarshaller<?> unmarshaller = unmarshallerFactory.build(cl, nodeConverterRegistry);
 				return new InterfaceConverter(cl, unmarshaller);
 			}
 
@@ -186,8 +169,7 @@ class ProxyableGetMethodFactory {
 		throw new InvalidReturnTypeException();
 	}
 
-	private static CollectionType getCollectionType(Type returnType)
-			throws InvalidReturnTypeException {
+	private static CollectionType getCollectionType(Type returnType) throws InvalidReturnTypeException {
 		if (returnType instanceof Class) {
 			Class<?> cl = (Class<?>) returnType;
 			if (cl.isArray()) {
