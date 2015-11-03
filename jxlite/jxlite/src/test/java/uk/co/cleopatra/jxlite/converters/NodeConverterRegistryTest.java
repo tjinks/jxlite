@@ -69,7 +69,7 @@ public class NodeConverterRegistryTest {
 	@Test
 	public void testLookup() {
 		NodeConverter result = registry.lookup(Boolean.TYPE);
-		assertTrue(result instanceof BooleanClassConverter);
+		assertTrue(result instanceof BooleanConverter);
 	}
 
 }

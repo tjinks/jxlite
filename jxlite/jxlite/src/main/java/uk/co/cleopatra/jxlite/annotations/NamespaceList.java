@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specified a list of namespaces and namespace prefixes that are to be used
+ * Specifies a list of namespaces and namespace prefixes that are to be used
  * when interpreting XPath expressions
  * 
  * @see Path
@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface NamespaceList {
 	/**
 	 * One or more strings of the form &lt;prefix&gt;=&lt;namespace&gt; - e.g.
-	 * a=http://mycompany.com/myproduct
+	 * abc=http://mycompany.com/myproduct
 	 */
 	String[] value();
 }

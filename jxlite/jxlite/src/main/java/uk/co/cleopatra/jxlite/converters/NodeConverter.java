@@ -21,7 +21,7 @@ public interface NodeConverter {
 	/**
 	 * The type of Java object returned by this converter.
 	 * 
-	 * @return A java {@link java.lang.Class} instance
+	 * @return A {@link java.lang.Class} instance
 	 */
 	Class<?> getObjectType();
 }

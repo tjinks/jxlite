@@ -1,4 +1,4 @@
-package uk.co.cleopatra.jxlite;
+package uk.co.cleopatra.jxlite.converters;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Element;
 
+import uk.co.cleopatra.jxlite.MockUnmarshaller;
 import uk.co.cleopatra.jxlite.Unmarshaller;
+import uk.co.cleopatra.jxlite.XmlTestBase;
 import uk.co.cleopatra.jxlite.MockUnmarshaller.Intf;
 import uk.co.cleopatra.jxlite.converters.InterfaceConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverter;

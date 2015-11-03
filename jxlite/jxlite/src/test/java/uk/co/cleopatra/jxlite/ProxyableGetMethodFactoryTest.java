@@ -20,7 +20,7 @@ import uk.co.cleopatra.jxlite.annotations.ConvertUsing;
 import uk.co.cleopatra.jxlite.annotations.DefaultInt;
 import uk.co.cleopatra.jxlite.annotations.DefaultString;
 import uk.co.cleopatra.jxlite.annotations.Path;
-import uk.co.cleopatra.jxlite.converters.IntegerClassConverter;
+import uk.co.cleopatra.jxlite.converters.IntegerConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverterBase;
 import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
@@ -30,7 +30,7 @@ public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 	private ProxyableGetMethodFactory factory;
 
 	private static class DoubleItConverter extends NodeConverterBase {
-		private final IntegerClassConverter conv = new IntegerClassConverter();
+		private final IntegerConverter conv = new IntegerConverter();
 
 		public DoubleItConverter() {
 			super(Integer.TYPE);

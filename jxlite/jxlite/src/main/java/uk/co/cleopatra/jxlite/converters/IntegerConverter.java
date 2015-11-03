@@ -6,9 +6,9 @@ import org.w3c.dom.Node;
 
 import uk.co.cleopatra.jxlite.JxLiteClientException;
 
-public class IntegerClassConverter extends NodeConverterBase {
+public class IntegerConverter extends NodeConverterBase {
 
-	public IntegerClassConverter() {
+	public IntegerConverter() {
 		super(Integer.class);
 	}
 	

@@ -35,14 +35,10 @@ public class NodeConverterRegistry {
 	} 
 	
 	private void registerDefaultConverters() {
-		register(new IntegerClassConverter());
-		//register(new IntegerTypeConverter());
-		register(new BooleanClassConverter());
-		//register(new BooleanTypeConverter());
-		register(new CharacterClassConverter());
-		//register(new CharacterTypeConverter());
-		register(new DoubleClassConverter());
-		//register(new DoubleTypeConverter());
+		register(new IntegerConverter());
+		register(new BooleanConverter());
+		register(new CharacterConverter());
+		register(new DoubleConverter());
 		register(new StringConverter());
 		register(new XmlNodeConverter());
 		register(new CalendarConverter());

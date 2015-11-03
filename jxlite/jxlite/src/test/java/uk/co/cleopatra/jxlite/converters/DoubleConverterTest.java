@@ -10,12 +10,12 @@ import org.w3c.dom.Node;
 import uk.co.cleopatra.jxlite.JxLiteClientException;
 import uk.co.cleopatra.jxlite.XmlTestBase;
 
-public class DoubleClassConverterTest extends XmlTestBase {
+public class DoubleConverterTest extends XmlTestBase {
 	private NodeConverter converter;
 	
 	@Before
 	public void setUp() throws Exception {
-		converter = new DoubleClassConverter();
+		converter = new DoubleConverter();
 	}
 
 	@Test

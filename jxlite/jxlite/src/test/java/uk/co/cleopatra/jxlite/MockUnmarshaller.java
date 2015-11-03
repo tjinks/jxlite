@@ -5,9 +5,9 @@ import org.w3c.dom.Element;
 
 import uk.co.cleopatra.jxlite.Unmarshaller;
 
-class MockUnmarshaller implements Unmarshaller<MockUnmarshaller.Intf> {
+public class MockUnmarshaller implements Unmarshaller<MockUnmarshaller.Intf> {
 	
-	interface Intf {
+	public interface Intf {
 		String getValue();
 	}
 

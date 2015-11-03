@@ -1,6 +1,7 @@
 package uk.co.cleopatra.jxlite.converters;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -9,17 +10,15 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import uk.co.cleopatra.jxlite.JxLiteException;
+import uk.co.cleopatra.jxlite.JxLiteClientException;
 import uk.co.cleopatra.jxlite.XmlTestBase;
-import uk.co.cleopatra.jxlite.converters.BooleanClassConverter;
-import uk.co.cleopatra.jxlite.converters.NodeConverter;
 
-public class BooleanClassConverterTest extends XmlTestBase {
+public class IntegerConverterTest extends XmlTestBase {
 	private NodeConverter converter;
 
 	@Before
 	public void setUp() throws Exception {
-		converter = new BooleanClassConverter();
+		converter = new IntegerConverter();
 	}
 
 	@After
@@ -28,17 +27,17 @@ public class BooleanClassConverterTest extends XmlTestBase {
 
 	@Test
 	public void testMapElement() {
-		Node node = doc.getElementsByTagName("boolElement").item(0);
+		Node node = doc.getElementsByTagName("intElement").item(0);
 		Object result = converter.convert(node);
-		assertEquals(true, result);
+		assertEquals(666, result);
 	}
 
 	@Test
 	public void testMapAttr() {
-		Element element = (Element) doc.getElementsByTagName("boolAttr").item(0);
+		Element element = (Element) doc.getElementsByTagName("intAttr").item(0);
 		Attr attr = element.getAttributeNode("value");
 		Object result = converter.convert(attr);
-		assertEquals(false, result);
+		assertEquals(123, result);
 	}
 
 	@Test
@@ -47,7 +46,7 @@ public class BooleanClassConverterTest extends XmlTestBase {
 		Node node = doc.getElementsByTagName("textElement").item(0);
 		try {
 			converter.convert(node);
-		} catch (JxLiteException e) {
+		} catch (JxLiteClientException e) {
 			exceptionThrown = true;
 		}
 		assertTrue(exceptionThrown);

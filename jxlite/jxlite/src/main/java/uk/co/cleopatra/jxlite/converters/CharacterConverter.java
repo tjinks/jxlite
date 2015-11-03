@@ -4,10 +4,14 @@ import org.w3c.dom.Node;
 
 import uk.co.cleopatra.jxlite.JxLiteClientException;
 
-public class CharacterClassConverter extends NodeConverterBase {
+/**
+ * Converts the text content of an XML node (which must be a single character) 
+ * to a Java Character instance.
+ */
+public class CharacterConverter extends NodeConverterBase {
 	private final StringConverter stringConverter = new StringConverter();
 
-	public CharacterClassConverter() {
+	public CharacterConverter() {
 		super(Character.class);
 	}
 

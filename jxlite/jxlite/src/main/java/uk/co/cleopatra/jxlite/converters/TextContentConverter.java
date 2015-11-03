@@ -25,6 +25,12 @@ public abstract class TextContentConverter extends NodeConverterBase {
 		}
 	}
 
+	/**
+	 * Derived classes must override this method to convert the text content of an
+	 * XML node to an appropriate Java object.
+	 * @param nodeValue Text to be converted
+	 * @return Java object
+	 */
 	public abstract Object stringToObject(String nodeValue);
 
 }

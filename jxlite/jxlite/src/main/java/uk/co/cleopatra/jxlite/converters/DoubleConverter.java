@@ -6,9 +6,9 @@ import org.w3c.dom.Node;
 
 import uk.co.cleopatra.jxlite.JxLiteClientException;
 
-public class DoubleClassConverter extends NodeConverterBase {
+public class DoubleConverter extends NodeConverterBase {
 
-	public DoubleClassConverter() {
+	public DoubleConverter() {
 		super(Double.class);
 	}
 
