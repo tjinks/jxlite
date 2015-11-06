@@ -5,11 +5,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import uk.co.cleopatra.jxlite.converters.BooleanConverterTest;
+import uk.co.cleopatra.jxlite.converters.CalendarConverterTest;
 import uk.co.cleopatra.jxlite.converters.DoubleConverterTest;
 import uk.co.cleopatra.jxlite.converters.IntegerConverterTest;
 import uk.co.cleopatra.jxlite.converters.InterfaceConverterTest;
 import uk.co.cleopatra.jxlite.converters.StringConverterTest;
-import uk.co.cleopatra.jxlite.converters.datetime.CalendarConverterTest;
 import uk.co.cleopatra.jxlite.converters.datetime.DateTimeParserTest;
 import uk.co.cleopatra.jxlite.converters.datetime.TokenizerTest;
 

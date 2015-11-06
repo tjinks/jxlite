@@ -64,6 +64,12 @@ public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 		@DefaultInt(42)
 		int getMissingIntElement();
 
+		@Path("a:missingIntElementWithNoDefault")
+		int getMissingIntElementWithNoDefault();
+
+		@Path("a:missingIntegerElementWithNoDefault")
+		Integer getMissingIntegerElementWithNoDefault();
+
 		@Path("a:boolElement")
 		boolean getBoolElement();
 
@@ -120,7 +126,7 @@ public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 	}
 
 	@Test
-	public void testGetMethodForInteger() throws Exception {
+	public void testGetMethodForInt() throws Exception {
 		Method method = Main.class.getMethod("getIntElement", new Class[0]);
 		ProxyableGetMethod pgm = factory.methodFor(method);
 		int result = (Integer) pgm.get(doc.getDocumentElement());
@@ -128,12 +134,24 @@ public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 	}
 
 	@Test
-	public void testGetMethodForMissingInteger() throws Exception {
-		Method method = Main.class.getMethod("getMissingIntElement",
-				new Class[0]);
+	public void testGetMethodForMissingInt() throws Exception {
+		Method method = Main.class.getMethod("getMissingIntElement", new Class[0]);
 		ProxyableGetMethod pgm = factory.methodFor(method);
 		int result = (Integer) pgm.get(doc.getDocumentElement());
 		assertEquals(42, result);
+	}
+
+	@Test
+	public void testGetMethodForMissingIntWithNoDefault() throws Exception {
+		Method method = Main.class.getMethod("getMissingIntElementWithNoDefault", new Class[0]);
+		ProxyableGetMethod pgm = factory.methodFor(method);
+		boolean exceptionThrown = false;
+		try {
+			pgm.get(doc.getDocumentElement());
+		} catch (JxLiteClientException e) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
 	}
 
 	@Test
@@ -156,8 +174,7 @@ public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 	public void testGetMethodForIntf() throws Exception {
 		Method method = Main.class.getMethod("getIntf", new Class[0]);
 		ProxyableGetMethod pgm = factory.methodFor(method);
-		MockUnmarshaller.Intf result = (MockUnmarshaller.Intf) pgm.get(doc
-				.getDocumentElement());
+		MockUnmarshaller.Intf result = (MockUnmarshaller.Intf) pgm.get(doc.getDocumentElement());
 		assertEquals("textElement", result.getValue());
 	}
 
@@ -194,8 +211,7 @@ public class ProxyableGetMethodFactoryTest extends XmlTestBase {
 
 	@Test
 	public void testConvertUsing() throws Exception {
-		Method method = Main.class
-				.getMethod("getDoubleItElement", new Class[0]);
+		Method method = Main.class.getMethod("getDoubleItElement", new Class[0]);
 		ProxyableGetMethod pgm = factory.methodFor(method);
 		int result = (Integer) pgm.get(doc.getDocumentElement());
 		assertEquals(6, result);

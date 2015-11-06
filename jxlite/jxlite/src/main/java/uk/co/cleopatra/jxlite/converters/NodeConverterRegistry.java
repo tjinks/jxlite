@@ -22,23 +22,18 @@ public class NodeConverterRegistry {
 	}
 	
 	public NodeConverter lookup(Class<?> cl) {
-		if (cl.equals(Boolean.TYPE)) {
-			cl = Boolean.class;
-		} else if (cl.equals(Character.TYPE)) {
-			cl = Character.class;
-		} else if (cl.equals(Double.TYPE)) {
-			cl = Double.class;
-		} else if (cl.equals(Integer.TYPE)) {
-			cl = Integer.class;
-		}
 		return registry.get(cl);
 	} 
 	
 	private void registerDefaultConverters() {
 		register(new IntegerConverter());
+		register(new IntegerPrimitiveConverter());
 		register(new BooleanConverter());
+		register(new BooleanPrimitiveConverter());
 		register(new CharacterConverter());
+		register(new CharacterPrimitiveConverter());
 		register(new DoubleConverter());
+		register(new DoublePrimitiveConverter());
 		register(new StringConverter());
 		register(new XmlNodeConverter());
 		register(new CalendarConverter());

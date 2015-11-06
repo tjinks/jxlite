@@ -1,4 +1,4 @@
-package uk.co.cleopatra.jxlite.converters.datetime;
+package uk.co.cleopatra.jxlite.converters;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
