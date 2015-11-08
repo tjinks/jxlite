@@ -15,7 +15,7 @@ import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 
 public class UnmarshallerFactoryImplTest extends XmlTestBase {
 	private UnmarshallerFactory builder;
-	
+
 	@NamespaceList("a=http://xxx")
 	private interface TestInterface {
 		@SuppressWarnings("unused")
@@ -23,26 +23,25 @@ public class UnmarshallerFactoryImplTest extends XmlTestBase {
 
 			@Override
 			public String toString() {
-				return "" + realObject.getIntElement() + " " + realObject.getTextElement();
+				return "" + target.getIntElement() + " " + target.getTextElement();
 			}
 		}
-		
+
 		@Path("a:intElement")
 		int getIntElement();
-		
+
 		@Path("a:textElement")
 		String getTextElement();
-		
+
 		@Path("a:name")
 		Name getName();
 	}
-	
 
 	@NamespaceList("a=http://xxx")
 	private interface Name {
 		@Path("a:forename")
 		String getForename();
-		
+
 		@Path("a:surname")
 		String getSurname();
 	}
@@ -63,13 +62,13 @@ public class UnmarshallerFactoryImplTest extends XmlTestBase {
 		assertEquals("abc123", result.getTextElement());
 		assertEquals(666, result.getIntElement());
 	}
-	
-	@Test 
+
+	@Test
 	public void testToString() {
 		Unmarshaller<TestInterface> unmarshaller = builder.build(TestInterface.class, new NodeConverterRegistry());
 		TestInterface result = (TestInterface) unmarshaller.unmarshal(doc.getDocumentElement());
 		assertEquals("666 abc123", result.toString());
-	}
+	}	
 	
 	@Test
 	public void testChildInterface() {
@@ -79,5 +78,4 @@ public class UnmarshallerFactoryImplTest extends XmlTestBase {
 		assertEquals("fred", name.getForename());
 		assertEquals("bloggs", name.getSurname());
 	}
-
 }

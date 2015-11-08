@@ -1,9 +1,6 @@
 package uk.co.cleopatra.jxlite.converters;
 
-import javax.xml.xpath.XPathConstants;
-
 import org.w3c.dom.Node;
-
 
 public class StringConverter extends NodeConverterBase {
 
@@ -13,6 +10,6 @@ public class StringConverter extends NodeConverterBase {
 
 	@Override
 	protected Object doConvert(Node node) throws Exception {
-		return evaluate(node, XPathConstants.STRING);
+		return node.getTextContent();
 	}
 }

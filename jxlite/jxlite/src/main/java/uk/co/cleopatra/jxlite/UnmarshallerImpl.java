@@ -91,9 +91,9 @@ class UnmarshallerImpl<T> implements Unmarshaller<T> {
 	private static ObjectMethodsBase<?> getObjectMethods(Class<?> intf, Object proxy) {
 		try {
 			Class<ObjectMethodsBase> objectMethodsClass = getObjectMethodsClass(intf);
-			Field realObjectField = ObjectMethodsBase.class.getDeclaredField("realObject");
+			Field targetField = ObjectMethodsBase.class.getDeclaredField("target");
 			ObjectMethodsBase<?> result = objectMethodsClass.newInstance();
-			realObjectField.set(result, proxy);
+			targetField.set(result, proxy);
 			return result;
 		} catch (Exception e) {
 			throw JxLiteException.convert(e);
@@ -108,6 +108,8 @@ class UnmarshallerImpl<T> implements Unmarshaller<T> {
 			if (className.equals(OBJECT_METHODS_CLASS_NAME)) {
 				if (ObjectMethodsBase.class.isAssignableFrom(inner)) {
 					return (Class<ObjectMethodsBase>) inner;
+				} else {
+					throw new JxLiteClientException("ObjectMethods must inherit from ObjectMethodsBase<T>");
 				}
 			}
 		}
