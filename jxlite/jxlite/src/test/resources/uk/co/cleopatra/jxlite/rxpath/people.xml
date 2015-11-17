@@ -1,0 +1,11 @@
+<people xmlns="http://rxpath/test">
+	<person id="1">
+		<forename>selby</forename>
+		<surname>march</surname>	
+	</person>
+	<person id="2">
+		<forename>phil</forename>
+		<surname>dinn</surname>
+		<role>developer</role>	
+	</person>
+</people>

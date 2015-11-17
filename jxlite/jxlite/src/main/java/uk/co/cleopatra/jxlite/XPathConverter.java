@@ -66,7 +66,7 @@ class XPathConverter {
 		this.collectionType = collectionType;
 		this.xpathExpression = xpathExpression;
 	}
-
+	
 	Object convert(Element context) {
 		try {
 			NodeList nodeList = (NodeList) xpathExpression.evaluate(context,
