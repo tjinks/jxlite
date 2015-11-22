@@ -13,15 +13,18 @@ public class RXPathParser {
 	private final RXPathExpressionImpl result;
 	private String namePart1, namePart2;
 	
+	public static RXPathExpression compile(String rxp, NamespaceContext namespaceContext) {
+		return new RXPathParser(rxp, namespaceContext).getExpression();
+	}
 
-	public RXPathParser(String rxp, NamespaceContext namespaceContext) {
+	private RXPathParser(String rxp, NamespaceContext namespaceContext) {
 		lexer = new Lexer(rxp);
 		this.namespaceContext = namespaceContext;
 		result = new RXPathExpressionImpl();
 		parseInternal();
 	}
 	
-	public RXPathExpression getExpression() {
+	private RXPathExpression getExpression() {
 		return result;
 	}
 

@@ -3,14 +3,13 @@ package uk.co.cleopatra.jxlite;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
+import java.util.List;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import uk.co.cleopatra.jxlite.converters.NodeConverter;
+import uk.co.cleopatra.jxlite.rxpath.RXPathExpression;
 
 /**
  * Converts a set of (zero or more) XML nodes that are identified by an XPath
@@ -20,7 +19,7 @@ class XPathConverter {
 
 	private final NodeConverter nodeConverter;
 	private final Multiplicity multiplicity;
-	private final XPathExpression xpathExpression;
+	private final RXPathExpression expr;
 	private final CollectionType collectionType;
 
 	/**
@@ -38,7 +37,7 @@ class XPathConverter {
 	 *            A {@link NodeConverter} that will be used to convert
 	 *            individual nodes to Java objects
 	 */
-	XPathConverter(XPathExpression xpathExpression, Multiplicity multiplicity,
+	XPathConverter(RXPathExpression expr, Multiplicity multiplicity,
 			CollectionType collectionType, NodeConverter nodeConverter) {
 		super();
 
@@ -64,19 +63,18 @@ class XPathConverter {
 		this.nodeConverter = nodeConverter;
 		this.multiplicity = multiplicity;
 		this.collectionType = collectionType;
-		this.xpathExpression = xpathExpression;
+		this.expr = expr;
 	}
 	
 	Object convert(Element context) {
 		try {
-			NodeList nodeList = (NodeList) xpathExpression.evaluate(context,
-					XPathConstants.NODESET);
-			checkMultiplicity(nodeList.getLength());
+			List<Node> nodeList = expr.evaluate(context);
+			checkMultiplicity(nodeList.size());
 			switch (multiplicity) {
 			case ZERO_OR_ONE:
 			case EXACTLY_ONE:
-				if (nodeList.getLength() == 1) {
-					return nodeConverter.convert(nodeList.item(0));
+				if (nodeList.size() == 1) {
+					return nodeConverter.convert(nodeList.get(0));
 				} else {
 					return null;
 				}
@@ -88,7 +86,7 @@ class XPathConverter {
 		}
 	}
 
-	private Object convertMultiItemNodeList(NodeList nodeList) {
+	private Object convertMultiItemNodeList(List<Node> nodeList) {
 		switch (collectionType) {
 		case LIST:
 			return convertNodeListToCollection(nodeList);
@@ -99,21 +97,21 @@ class XPathConverter {
 		}
 	}
 
-	private Object convertNodeListToArray(NodeList nodeList) {
-		int length = nodeList.getLength();
+	private Object convertNodeListToArray(List<Node> nodeList) {
+		int length = nodeList.size();
 		Object result = Array
 				.newInstance(nodeConverter.getObjectType(), length);
 		for (int i = 0; i < length; i++) {
-			Array.set(result, i, nodeConverter.convert(nodeList.item(i)));
+			Array.set(result, i, nodeConverter.convert(nodeList.get(i)));
 		}
 		return result;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Object convertNodeListToCollection(NodeList nodeList) {
+	private Object convertNodeListToCollection(List<Node> nodeList) {
 		Collection result = new ArrayList();
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			result.add(nodeConverter.convert(nodeList.item(i)));
+		for (int i = 0; i < nodeList.size(); i++) {
+			result.add(nodeConverter.convert(nodeList.get(i)));
 		}
 		return result;
 	}

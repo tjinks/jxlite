@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPathExpression;
 
 import org.w3c.dom.Element;
 
@@ -21,6 +20,8 @@ import uk.co.cleopatra.jxlite.converters.InterfaceConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverter;
 import uk.co.cleopatra.jxlite.converters.NodeConverterRegistry;
 import uk.co.cleopatra.jxlite.converters.TextContentConverter;
+import uk.co.cleopatra.jxlite.rxpath.RXPathExpression;
+import uk.co.cleopatra.jxlite.rxpath.RXPathParser;
 
 class ProxyableGetMethodFactory {
 
@@ -39,9 +40,9 @@ class ProxyableGetMethodFactory {
 		private final Object defaultValue;
 		private final boolean returnsPrimitive;
 
-		ProxyableGetMethodImpl(XPathExpression xPathExpression, Multiplicity multiplicity,
+		ProxyableGetMethodImpl(RXPathExpression expr, Multiplicity multiplicity,
 				CollectionType collectionType, NodeConverter nodeConverter, Object defaultValue) {
-			converter = new XPathConverter(xPathExpression, multiplicity, collectionType, nodeConverter);
+			converter = new XPathConverter(expr, multiplicity, collectionType, nodeConverter);
 			this.defaultValue = defaultValue;
 			switch (multiplicity) {
 			case ZERO_OR_ONE:
@@ -113,8 +114,8 @@ class ProxyableGetMethodFactory {
 			if (nodeConverter instanceof TextContentConverter && defaultValue instanceof String) {
 				defaultValue = ((TextContentConverter) nodeConverter).stringToObject((String) defaultValue);
 			}
-			XPathExpression xPathExpression = XPathCompiler.compile(pathAnnotation.value(), namespaceContext);
-			return new ProxyableGetMethodImpl(xPathExpression, multiplicity, collectionType, nodeConverter,
+			RXPathExpression expr = RXPathParser.compile(pathAnnotation.value(), namespaceContext);
+			return new ProxyableGetMethodImpl(expr, multiplicity, collectionType, nodeConverter,
 					defaultValue);
 		} catch (InvalidReturnTypeException e) {
 			throw new JxLiteClientException("Return type for method '" + method.getName() + "' is not supported");
