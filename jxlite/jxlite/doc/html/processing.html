@@ -16,9 +16,10 @@
 	<p>
 	When an interface method which has a @Path annotation is called, the value that is returned depends on three things:
 	<ul>
-		<li>The XPath specified by the @Path annotation
+		<li>The XPath specified by the @Path annotation. (Note that only a 
+		<a href="rxpath.html">restricted subset<a/> of XPath is supported)
 		<li>The method's return type
-		<li>The implicit current XPath context (always be an XML Element)
+		<li>The implicit current XPath context (will always be an XML Element)
 	</ul>
 	<p>
 	JxLite's initial XPath context is set from the argument passed to the <em>unmarshal</em> method. This can  

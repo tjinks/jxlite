@@ -33,7 +33,8 @@ public interface Person {
 	</div>  
 	<p>
 	We now decorate this interface with annotations that describe where in the input document 
-	the various 'get' methods are to obtain their data. The parameter to each @Path annotation is an XPath 
+	the various 'get' methods are to obtain their data. The parameter to each @Path annotation is an 
+	<a href="rxpath.html">XPath-like</a> 
 	expression relative to the root of the document:
 	<div class="code">
 package uk.co.cleopatra.jxlite.examples;
@@ -52,7 +53,7 @@ public interface Person {
 }
 	</div> 
 	<p>
-	We can now create an JxLite unmarshaller that will unmarshal the input XML into an instance of Person. 
+	We can now create a JxLite unmarshaller that will unmarshal the input XML into an instance of Person. 
 	(This code assumes that the XML file is available as a Java resource. We use the JxLite utility class 
 	<em>XmlDocumentLoader</em> to read this resource into a Document object).
 	<div class="code">
