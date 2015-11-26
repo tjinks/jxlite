@@ -4,10 +4,10 @@ import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Node;
 
-import uk.co.cleopatra.jxlite.ThreadLocalXPathFactory;
 import uk.co.cleopatra.jxlite.JxLiteException;
 
 /**
@@ -23,7 +23,7 @@ public abstract class NodeConverterBase implements NodeConverter {
 		@Override
 		protected XPathExpression initialValue() {
 			try {
-				XPath xp = ThreadLocalXPathFactory.get().newXPath();
+				XPath xp = XPathFactory.newInstance().newXPath();
 				return xp.compile(".");
 			} catch (XPathExpressionException e) {
 				throw JxLiteException.convert(e);
